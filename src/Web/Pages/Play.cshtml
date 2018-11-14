@@ -1,0 +1,17 @@
+﻿@page
+@model Web.Pages.PlayModel
+<div class="container gamearea">
+    <div class="row" id="lobby">
+        <div class="col-6">&nbsp;</div>
+        <div class="col-6 messagebox">
+            <h2>Lobby</h2>
+            <ul id="messagesList"></ul>
+            <form id="lobbyMessage">
+                Message: <input type="text" id="messageInput" />
+                <input type="submit" id="sendButton" value="Send Message" />
+            </form>
+        </div>
+    </div>
+</div>
+<script src="~/lib/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/game.js"></script>
