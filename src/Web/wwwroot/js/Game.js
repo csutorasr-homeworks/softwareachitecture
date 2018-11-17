@@ -2,9 +2,13 @@
 
 var connection = new signalR.HubConnectionBuilder().withUrl("/hubs/game").build();
 
-connection.on("ReceiveLobbyMessage", function (user, message) {
-    var msg = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    var encodedMsg = user + " says " + msg;
+function clearMessageList() {
+    var element = document.getElementById("messagesList");
+    element.children.forEach(x => x.remove());
+}
+
+connection.on("ReceiveMessage", function (user, message) {
+    var encodedMsg = user + ": " + message;
     var li = document.createElement("li");
     li.textContent = encodedMsg;
     document.getElementById("messagesList").appendChild(li);
@@ -19,7 +23,7 @@ document.getElementById("lobbyMessage").addEventListener("submit", function (eve
     var element = document.getElementById("messageInput");
     var message = element.value;
     element.disabled = true;
-    connection.invoke("SendLobbyMessage", message).then(function () {
+    connection.invoke("SendMessage", message).then(function () {
         element.value = "";
         element.disabled = false;
         element.focus();
@@ -29,4 +33,14 @@ document.getElementById("lobbyMessage").addEventListener("submit", function (eve
         return console.error(err.toString());
     });
     event.preventDefault();
+});
+
+document.getElementById("create-game").addEventListener("click", function (event) {
+    clearMessageList();
+    // TODO: create game
+});
+
+document.getElementById("join-game").addEventListener("click", function (event) {
+    clearMessageList();
+    // TODO: join game by code
 });

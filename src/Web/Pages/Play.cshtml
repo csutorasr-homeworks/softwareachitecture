@@ -2,14 +2,25 @@
 @model Web.Pages.PlayModel
 <div class="container gamearea">
     <div class="row" id="lobby">
-        <div class="col-6">&nbsp;</div>
-        <div class="col-6 messagebox">
-            <h2>Lobby</h2>
-            <ul id="messagesList"></ul>
-            <form id="lobbyMessage">
-                Message: <input type="text" id="messageInput" />
-                <input type="submit" id="sendButton" value="Send Message" />
-            </form>
+        <div class="col-6">
+            <div>
+                <button class="btn" id="create-game">Create new game</button>
+                <button class="btn" id="join-game">Join game</button>
+            </div>
+        </div>
+        <div class="col-6 card">
+            <div class="card-body messagebox">
+                <h2 class="card-title">Lobby</h2>
+                <ul id="messagesList"></ul>
+                <form id="lobbyMessage">
+                    <div class="input-group mb-3">
+                        <input type="text" id="messageInput" class="form-control" placeholder="message" />
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="submit" id="sendButton">Send</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
