@@ -2,10 +2,18 @@
 @model Web.Pages.PlayModel
 <div class="container gamearea">
     <div class="row" id="lobby">
-        <div class="col-6">
+        <div class="col-6" id="createJoin">
             <div>
+                <div class="input-group mb-3">
+                    <input type="text" id="codeInput" class="form-control" placeholder="code" />
+                </div>
                 <button class="btn" id="create-game">Create new game</button>
                 <button class="btn" id="join-game">Join game</button>
+            </div>
+        </div>
+        <div class="col-6" id="startGame" style="display: none;">
+            <div>
+                <button class="btn" id="start-game">Start game</button>
             </div>
         </div>
         <div class="col-6 card">

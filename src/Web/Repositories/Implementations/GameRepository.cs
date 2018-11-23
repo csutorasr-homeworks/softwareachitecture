@@ -17,19 +17,29 @@ namespace Web.Repositories.Implementations
             this.dbContext = dbContext;
         }
 
-        public Task<GameSession> CreateGame()
+        public async Task<GameSession> CreateGame(string code)
         {
-            throw new NotImplementedException();
+            if (await dbContext.GameSessions.AnyAsync(x => x.Code == code))
+            {
+                throw new ArgumentException();
+            }
+            var game = new GameSession
+            {
+                Code = code,
+            };
+            await dbContext.GameSessions.AddAsync(game);
+            await dbContext.SaveChangesAsync();
+            return game;
         }
 
         public Task<GameSession> GetGame(Guid id)
         {
-            return dbContext.GameSessions.FirstOrDefaultAsync(x => x.Id == id);
+            return dbContext.GameSessions.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public Task<GameSession> GetGameByCode(string code)
         {
-            return dbContext.GameSessions.FirstOrDefaultAsync(x => x.Code == code);
+            return dbContext.GameSessions.AsNoTracking().FirstOrDefaultAsync(x => x.Code == code);
         }
     }
 }

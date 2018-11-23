@@ -44,13 +44,17 @@ namespace Web.Hubs
             return Clients.Group(userGroups[Context.ConnectionId]);
         }
 
-        private async Task CreateGame()
+        public async Task CreateGame(string code)
         {
-            await gameRepository.CreateGame();
+            var game = await gameRepository.CreateGame(code);
+            await Clients.Caller.SendAsync("JoinGame", game);
+            // TODO: move to new room
         }
-        private async Task<GameSession> GetGameByCode(string code)
+        public async Task GetGameByCode(string code)
         {
-            return await gameRepository.GetGameByCode(code);
+            var game = await gameRepository.GetGameByCode(code);
+            await Clients.Caller.SendAsync("JoinGame", game);
+            // TODO: move to new room
         }
     }
 }

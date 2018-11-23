@@ -4,7 +4,14 @@ var connection = new signalR.HubConnectionBuilder().withUrl("/hubs/game").build(
 
 function clearMessageList() {
     var element = document.getElementById("messagesList");
-    element.children.forEach(x => x.remove());
+    while (element.firstChild) { element.firstChild.remove(); }
+}
+
+function joinGame(game) {
+    var createJoin = document.getElementById("createJoin");
+    var startGame = document.getElementById("startGame");
+    createJoin.style.display = "none";
+    startGame.style.display = "block";
 }
 
 connection.on("ReceiveMessage", function (user, message) {
@@ -36,11 +43,20 @@ document.getElementById("lobbyMessage").addEventListener("submit", function (eve
 });
 
 document.getElementById("create-game").addEventListener("click", function (event) {
+    var code = document.getElementById('codeInput').value;
     clearMessageList();
-    // TODO: create game
+    connection.invoke("CreateGame", code).then(function (game) {
+    }).catch(function (err) {
+        return console.error(err.toString());
+    });
 });
 
 document.getElementById("join-game").addEventListener("click", function (event) {
+    var code = document.getElementById('codeInput').value;
     clearMessageList();
-    // TODO: join game by code
+    connection.invoke("JoinGame", code).then(function (game) {
+        joinGame(game);
+    }).catch(function (err) {
+        return console.error(err.toString());
+    });
 });
