@@ -1,22 +1,132 @@
 ﻿@page
 @model Web.Pages.PlayModel
-<div class="container gamearea">
+<div class="container gamearea" id="gamearea" data-bind="template: { name: 'gametemplate', data: gamevm, afterRender:gamevm.afterRender }">
+</div>
+<script type="text/html" id="gametemplate">
+
     <div class="row" id="lobby">
-        <div class="col-6" id="createJoin">
-            <div>
-                <div class="input-group mb-3">
-                    <input type="text" id="codeInput" class="form-control" placeholder="code" />
+        <div class="col-md-8" id="createJoin">
+            <!-- ko if: lobbyVisible -->
+            <div class="row lobby-row card">
+                <div class="col-md-12 mb-3 lobby-column">
+                    <div class="row lobby-header-row">
+                        <div class="col-md-12 lobby-header"><h4>Join a room or create</h4></div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="input-group">
+                            <input type="text" id="codeInput" class="form-control w-25" placeholder="code" />
+                            <button class="btn w-50" id="join-game" data-bind="click:joinGame">Join game</button>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="input-group">
+                            <button class="btn w-50" id="create-game">Create new game</button>
+                        </div>
+                    </div>
                 </div>
-                <button class="btn" id="create-game">Create new game</button>
-                <button class="btn" id="join-game">Join game</button>
             </div>
-        </div>
-        <div class="col-6" id="startGame" style="display: none;">
-            <div>
-                <button class="btn" id="start-game">Start game</button>
+            <!-- /ko -->
+            <!-- ko if: waitingVisible -->
+            <div class="row waiting-row card">
+                <div class="col-md-12 mb-3 waiting-column">
+                    <div class="row waiting-header-row">
+                        <div class="col-md-12 waiting-header"><h4>Waiting for players</h4></div>
+                    </div>
+                    <div class="row player-points-row">
+                        <div class="player-point col"><button class="btn" data-bind="click:startPressed,enable:canStart">Start the game!</button></div>
+                    </div>
+                    <!-- ko foreach:players-->
+                    <div class="row player-points-row">
+                        <div class="col player-point" data-bind="css:color.class"><span data-bind="text:user.UserName"></span></div>
+                    </div>
+                    <!-- /ko -->
+                </div>
             </div>
+            <!-- /ko -->
+            <!-- ko if: arrivedVisible-->
+            <div class="row arrived-row card">
+                <div class="col-md-12 mb-3 arrived-column">
+                    <div class="row arrived-header-row">
+                        <div class="col-md-12 arrived-header"><h4>Yay! Everybody arrived</h4></div>
+                    </div>
+                    <div class="row">
+                        <div class="player-point col green player-arrived"><h4>Starting in 3 seconds</h4></div>
+                    </div>
+                </div>
+            </div>
+            <!-- /ko -->
+            <!-- ko if: gameVisible -->
+            <div class="row game-row card" id="startGame">
+                <div class="col-md-12 game-column">
+                    <!-- ko if:question() !== null-->
+                    <div id="game-header" class="row game-header-row">
+                        <div class="col-md-6 game-header"><h5>Question <span data-bind="text:question().QuestionNr"></span>:</h5></div>
+                        <div class="col-md-6 game-header"><h5>5 seconds remaining</h5></div>
+                    </div>
+                    <div id="game-body" class="row game-body-row">
+                        <div class="col-md-12 quiz-column">
+                            <div class="row question-row">
+                                <div class="col-md-12 question-column">
+                                    <h3 data-bind="text:question().QuestionText"></h3>
+                                </div>
+                            </div>
+                            <div class="row answers-row">
+                                <div class="col-md-12 answers-column" data-bind="foreach:{ data:optionVMs, as:'option'}">
+                                    <div class="row answer-row" data-bind="css:status,click:sendGuess">
+                                        <div class="col-md-12 answer-column">
+                                            <div class="answer-float">
+                                                <h4 data-bind="text:$data.text"></h4>
+                                            </div>
+                                            <h4>&nbsp;</h4>
+                                        </div>
+                                        <div class="col-md-12 answer-parts" data-bind="foreach:{ data: $data.guesses, as:'guess'}">
+                                            <div class="answer-part" data-bind="style: { width:$data.width },css:$data.color"><h4>&nbsp;</h4></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row player-points-row" data-bind="foreach:scoreVMs">
+                                <div class="col player-point" data-bind="css:color"><span data-bind="text:name"></span> has <span data-bind="text:points"></span> points</div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- /ko -->
+                </div>
+            </div>
+
+            <!-- /ko -->
+            <!-- ko if: endedVisible -->
+            <div class="row ended-row card">
+                <div class="col-md-12 mb-3 waiting-column">
+                    <div class="row ended-header-row">
+                        <div class="col-md-12 ended-header"><h4>The game ended</h4></div>
+                    </div>
+                    <div class="row player-points-row">
+                        <div class="col player-point red">You placed 2nd with 15 points. Better luck next time</div>
+                    </div>
+                    <div class="row player-points-row">
+                        <div class="player-point col green ">You placed 2nd with 15 points. Better luck next time</div>
+                    </div>
+                    <div class="row player-points-row">
+                        <div class="player-point col blue player-arrived">You won!!!</div>
+                    </div>
+                    <div class="row player-points-row">
+                        <div class="player-point col purple ">You placed 2nd with 15 points. Better luck next time;</div>
+                    </div>
+                    <div class="row player-points-row">
+                        <div class="player-point col black  ">You placed 2nd with 15 points. Better luck next time;</div>
+                    </div>
+
+                    <div class="row player-points-row">
+                        <div class="player-point col"><button class="btn" data-bind="click:gotoLobby">Go start another game!</button></div>
+                    </div>
+                </div>
+            </div>
+            <!-- /ko -->
         </div>
-        <div class="col-6 card">
+        <!-- ko if: connected -->
+        <div class="col-md-4 card">
             <div class="card-body messagebox">
                 <h2 class="card-title">Lobby</h2>
                 <ul id="messagesList"></ul>
@@ -30,7 +140,10 @@
                 </form>
             </div>
         </div>
+        <!-- /ko -->
     </div>
-</div>
+</script>
 <script src="~/lib/signalr/dist/browser/signalr.js"></script>
+<script src="~/lib/knockout/knockout-3.4.2.js"></script>
+<script src="~/js/Connection.js"></script>
 <script src="~/js/game.js"></script>
