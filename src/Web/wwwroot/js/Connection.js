@@ -79,6 +79,12 @@ window.connection = (function () {
          */
         invokeSendGuess: function (optionNr) {
             return connection.invoke.call(connection, "SendAnswer", optionNr);
+        },
+        /*Amikor az utolso kérdést is megválaszolták elküldi ezt az üzenetet
+         ez tartalmazza a 
+         */
+        onGameEnded: function (callback) {
+            connection.on("GameEnded", callback);
         }
     };
     return connectionWrapper;

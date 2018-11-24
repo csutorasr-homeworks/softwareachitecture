@@ -415,13 +415,17 @@ var gameviewmodell = (function () {
     vm.sendGuess = function (id) {
         connection.invokeSendGuess(id);
     };
-    vm.showErrorMessag = function (message) {
-        console.log(message);
-    };
+    vm.onGameEnded = function() {
 
+    }
 
     connection.onPlayerConnected(vm.onPlayersConnected);
     connection.onQuestionsRecieved(vm.onQuestionRecieved);
+    connection.onGameEnded(vm.onGameEnded);
+
+    vm.showErrorMessag = function (message) {
+        console.log(message);
+    };
     return vm;
 }());
 
