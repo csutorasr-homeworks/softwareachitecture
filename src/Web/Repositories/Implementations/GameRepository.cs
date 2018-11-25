@@ -153,5 +153,10 @@ namespace Web.Repositories.Implementations
                 .ThenInclude(x => x.User)
                 .FirstOrDefaultAsync();
         }
+
+        public async Task<IList<GameSession>> GetEndedGames(string userId)
+        {
+            return await dbContext.GameSessions.Where(x => x.Finnished == true && x.Users.Select(u => u.UserId).Contains(userId)).ToListAsync();
+        }
     }
 }

@@ -13,6 +13,7 @@ namespace Web.Repositories
         Task<GameSession> GetGameByCode(string code);
         Task<List<GameSession>> GetAvailableGames();
         Task<GameSession> GetGameForUser(string userId, bool waiting, bool inprogress, bool ended);
+        Task<IList<GameSession>> GetEndedGames(string userId);
         Task<GameSession> UpdateGame(GameSession game);
         Task<GameQuestion> GetQuestion(Guid gameId);
         Task SelectAnswer(Guid gameId, string userId, Guid answerId);
