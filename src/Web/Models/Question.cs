@@ -12,5 +12,7 @@ namespace Web.Models
         public Guid QuestionCategoryId { get; set; }
         public QuestionCategory QuestionCategory { get; set; }
         public ICollection<Answer> Answers { get; set; }
+        public Guid? AddedById { get; set; }
+        public User AddedBy { get; set; }
     }
 }
