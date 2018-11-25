@@ -1,12 +1,13 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Web.Models;
 using Web.Repositories;
 using Web.Repositories.Interfaces;
 
 namespace Web.Hubs
 {
+    [Authorize]
     public class GameHub : Hub
     {
         private const string LOBBY_NAME = "lobby";
