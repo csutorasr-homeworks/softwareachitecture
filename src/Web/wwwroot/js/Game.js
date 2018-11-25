@@ -21,7 +21,7 @@ class CreateGameViewModel {
             this.playerNumbers.push(i);
         }
         this.questionNumbers = [];
-        for (i = 2; i < 10; i++) {
+        for (i = 2; i <= 20; i++) {
             this.questionNumbers.push(i);
         }
         this.connection = connection;
