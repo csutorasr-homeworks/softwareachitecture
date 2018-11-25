@@ -78,7 +78,7 @@ window.connection = (function () {
          * Boolean success;
          */
         invokeSendGuess: function (optionNr) {
-            return connection.invoke.call(connection, "SendAnswer", optionNr);
+            return connection.invoke("SendGuess", optionNr);
         },
         /*Amikor az utolso kérdést is megválaszolták elküldi ezt az üzenetet
          ez tartalmazza a 

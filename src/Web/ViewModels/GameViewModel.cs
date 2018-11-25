@@ -14,7 +14,7 @@ namespace Web.Hubs
             foreach(UserGameSessions user  in game.Users){
                 Users.Add(new UserViewModel(user));
             }
-            GameCanStart = game.Users.Count == game.MaxUsers;
+            GameCanStart = true;//TODO game.Users.Count == game.MaxUsers;
             GameStarted = game.InProgress == true;
         }
 

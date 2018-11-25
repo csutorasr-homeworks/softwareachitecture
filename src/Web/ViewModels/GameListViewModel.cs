@@ -16,7 +16,8 @@ namespace Web.Hubs
 
                 games.Add(new GameViewModel
                 {
-                    GameId = game.Id
+                    GameId = game.Id,
+                    MaxUsers = game.MaxUsers
                 });
             }
         }
@@ -26,5 +27,7 @@ namespace Web.Hubs
     {
 
         public Guid GameId { get; set; }
+        public int MaxUsers { get; set; }
+        public Guid QuestionNr { get; set; }
     }
 }

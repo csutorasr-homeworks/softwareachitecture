@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Web.Repositories;
 using Web.Repositories.Interfaces;
+using Web.ViewModels;
 
 namespace Web.Hubs
 {
@@ -61,15 +62,23 @@ namespace Web.Hubs
             var userId = Context.UserIdentifier;
             var gameIdGuid = new System.Guid(gameId);
             var currentPlayers = await userGameSessionRepository.GetAllForGame(gameIdGuid);
-            //TODO check for game state waiting
-            //TODO check for maxusers
-            if(!currentPlayers.Exists(x=> x.UserId == userId))
-            {
-                await userGameSessionRepository.Add(gameIdGuid, userId);
-            }
             var game = await gameRepository.GetGame(gameIdGuid);
-            await Groups.AddToGroupAsync(Context.ConnectionId, gameId);
-            await Clients.Group(game.Id.ToString()).SendAsync("PlayerConnected", new PlayerConnectedViewModel(game));            
+            //TODO check for game state waiting
+            if (game.WaitingForPlayers)
+            {
+                if (!currentPlayers.Exists(x => x.UserId == userId))
+                {
+                    await userGameSessionRepository.Add(gameIdGuid, userId);
+                    game = await gameRepository.GetGame(gameIdGuid);
+                }
+                await Groups.AddToGroupAsync(Context.ConnectionId, gameId);
+                await Clients.Group(game.Id.ToString()).SendAsync("PlayerConnected", new PlayerConnectedViewModel(game));
+            }
+            else
+            {
+                //TODO check for maxusers     
+            }
+
         }
 
         public async Task GetGames()
@@ -94,11 +103,25 @@ namespace Web.Hubs
             }
 
         }
-        public async Task GetGameByCode(string code)
+
+        public async Task<bool> SendGuess(string answerId)
         {
-            var game = await gameRepository.GetGameByCode(code);
-            await Clients.Caller.SendAsync("JoinGame", game);
-            // TODO: move to new room
+            var userId = Context.UserIdentifier;
+            var gameSession = await gameRepository.GetGameForUser(userId, false, true, false);
+            if (gameSession != null)
+            {
+                await gameRepository.SelectAnswer(gameSession.Id, userId, new System.Guid(answerId));
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
+
+        //public async Task SendScores(string GameId)
+        //{
+        //    await Clients.Group(GameId).SendAsync("PlayerConnected", new ScoreVievModel());
+        //}
     }
 }
