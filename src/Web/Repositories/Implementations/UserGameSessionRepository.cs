@@ -19,7 +19,7 @@ namespace Web.Repositories.Implementations
             this.dbContext = dbContext;
         }
 
-        public async Task<UserGameSessions> Add(Guid gameId, Guid userId)
+        public async Task<UserGameSessions> Add(Guid gameId, string userId)
         {
             var userGameSession = new UserGameSessions
             {

@@ -12,7 +12,7 @@ namespace Web.Repositories
         Task<GameSession> GetGame(Guid id);
         Task<GameSession> GetGameByCode(string code);
         Task<List<GameSession>> GetAvailableGames();
-        Task<GameSession> GetGameForUser(Guid userId, bool waiting, bool inprogress, bool ended);
+        Task<GameSession> GetGameForUser(string userId, bool waiting, bool inprogress, bool ended);
         Task<GameSession> UpdateGame(GameSession game);
     }
 }
