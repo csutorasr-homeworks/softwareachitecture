@@ -63,8 +63,7 @@ namespace Web.Hubs
             var gameIdGuid = new System.Guid(gameId);
             var currentPlayers = await userGameSessionRepository.GetAllForGame(gameIdGuid);
             var game = await gameRepository.GetGame(gameIdGuid);
-            //TODO check for game state waiting
-            if (game.WaitingForPlayers)
+            if (game.WaitingForPlayers && game.Users.Count < game.MaxUsers)
             {
                 if (!currentPlayers.Exists(x => x.UserId == userId))
                 {
@@ -74,10 +73,6 @@ namespace Web.Hubs
                 await Groups.RemoveFromGroupAsync(Context.ConnectionId, LOBBY_NAME);
                 await Groups.AddToGroupAsync(Context.ConnectionId, gameId);
                 await Clients.Group(game.Id.ToString()).SendAsync("PlayerConnected", new PlayerConnectedViewModel(game));
-            }
-            else
-            {
-                //TODO check for maxusers     
             }
 
         }
