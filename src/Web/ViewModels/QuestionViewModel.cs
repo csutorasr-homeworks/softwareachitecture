@@ -35,6 +35,6 @@ namespace Web.ViewModels
             public string Text { get; set; }
             public IDictionary<string, DateTime> UserIdsSelected { get; set; }
         }
-        public Guid CorrectAnswerId { get; set; }
+        public Guid? CorrectAnswerId { get; set; }
     }
 }
