@@ -34,7 +34,6 @@ namespace Web.Repositories.Implementations
                     QuestionId = x.Id,
                 }).ToListAsync(),
                 MaxUsers = maxUsers,
-                QuestionCount = questionCount 
             };
 
             await dbContext.GameSessions.AddAsync(game);
@@ -89,7 +88,7 @@ namespace Web.Repositories.Implementations
         public async Task<GameQuestion> GetQuestion(Guid gameId)
         {
             var currentQuestion = await dbContext.GameSessions.AsNoTracking().Where(x => x.Id == gameId).Select(x => x.CurrentQuestion).FirstOrDefaultAsync();
-            return await dbContext.GameQuestions.AsNoTracking()
+            var question = await dbContext.GameQuestions.AsNoTracking()
                 .Where(x => x.GameId == gameId)
                 .Include(x => x.Question)
                 .ThenInclude(x => x.Answers)
@@ -97,6 +96,15 @@ namespace Web.Repositories.Implementations
                 .ThenInclude(x => x.UserGameSession)
                 .Skip(currentQuestion)
                 .FirstOrDefaultAsync();
+            if (question.StartTime == null)
+            {
+                dbContext.Attach(question);
+                question.StartTime = DateTime.Now;
+                await dbContext.SaveChangesAsync();
+            }
+            var random = new Random();
+            question.Question.Answers = question.Question.Answers.OrderBy(order => random.Next()).ToList();
+            return question;
         }
         public async Task SelectAnswer(Guid gameId, string userId, Guid answerId)
         {

@@ -20,7 +20,7 @@ namespace Web.Models
             {
                 if (Answer.IsCorrect)
                 {
-                    var time = (int)(AnswerTime - GameQuestion.StartTime).TotalMilliseconds / 100;
+                    var time = (int)(AnswerTime - GameQuestion.StartTime.Value).TotalMilliseconds / 100;
                     if (time > 100)
                     {
                         return 0;

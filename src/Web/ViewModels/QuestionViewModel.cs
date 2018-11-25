@@ -12,7 +12,7 @@ namespace Web.ViewModels
             GameQuestionId = question.Id;
             QuestionId = question.Question.Id;
             Text = question.Question.Text;
-            QuestionStartTime = question.StartTime;
+            QuestionStartTime = question.StartTime.Value;
             Answers = question.Question.Answers.Select(x => new Answer
             {
                 Id = x.Id,

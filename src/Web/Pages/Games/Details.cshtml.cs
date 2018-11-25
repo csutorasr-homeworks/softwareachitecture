@@ -30,7 +30,7 @@ namespace Web.Pages.Games
                 return NotFound();
             }
 
-            var GameSession = await repository.GetGame(id.Value);
+            var GameSession = await repository.GetResults(id.Value);
 
             if (GameSession == null)
             {
