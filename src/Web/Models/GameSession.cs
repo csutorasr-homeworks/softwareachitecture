@@ -14,6 +14,7 @@ namespace Web.Models
         public int CurrentQuestion { get; set; }
         public bool Finnished { get; set; }
         public int MaxUsers { get; set; }
+        public int QuestionCount { get; set; }
         public ICollection<UserGameSessions> Users { get; set; }
         public ICollection<GameQuestion> Questions { get; internal set; }
     }

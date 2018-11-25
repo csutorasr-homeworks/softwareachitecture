@@ -123,10 +123,10 @@ namespace Web.Hubs
                 await Clients.Group(gameSession.Id.ToString()).SendAsync("QuestionRecieved", new QuestionViewModel(question,true));
                 if (question.UserSelectedAnswers.Count == gameSession.Users.Count)
                 {
-                    if(gameSession.CurrentQuestion == gameSession.Questions.Count)
+                    if(gameSession.CurrentQuestion >= gameSession.QuestionCount)
                     {
                         gameSession.InProgress = false;
-                        gameSession.Finnished = false;
+                        gameSession.Finnished = true;
                         await gameRepository.UpdateGame(gameSession);
                         System.Threading.Thread.Sleep(3000);
                        // await Clients.Group(gameSession.Id.ToString()).SendAsync("GameEnded", new GameEndedViewModel(question, true));

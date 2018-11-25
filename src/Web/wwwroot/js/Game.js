@@ -375,12 +375,14 @@ var gameviewmodell = (function () {
                     status = "answer-wrong";
                 }
             }
-            var quesses = answer.userIdsSelected.map(function (userId) {
-                return {
+
+            var quesses = [];
+            for (var userId in answer.userIdsSelected) {
+                quesses.push({
                     color: vm.players().find(x => x.user.userId === userId).color.class,
                     width: "" + 100 / vm.players().length - 1 + "%"
-                };
-            });
+                });
+            }
             var optionVM = {
                 text: answer.text,
                 guesses: ko.observableArray(quesses),
