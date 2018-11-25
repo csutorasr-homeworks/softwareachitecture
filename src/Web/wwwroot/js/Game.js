@@ -150,9 +150,7 @@ var gameviewmodell = (function () {
     };
 
     vm.gotoLobby = function () {
-        connection.invokeGetGames();
-        vm.players.removeAll();
-        vm.state("lobby");
+        location.reload();
     };
  
 

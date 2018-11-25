@@ -71,6 +71,7 @@ namespace Web.Hubs
                     await userGameSessionRepository.Add(gameIdGuid, userId);
                     game = await gameRepository.GetGame(gameIdGuid);
                 }
+                await Groups.RemoveFromGroupAsync(Context.ConnectionId, LOBBY_NAME);
                 await Groups.AddToGroupAsync(Context.ConnectionId, gameId);
                 await Clients.Group(game.Id.ToString()).SendAsync("PlayerConnected", new PlayerConnectedViewModel(game));
             }
@@ -150,6 +151,7 @@ namespace Web.Hubs
             var gameLobby = await gameRepository.GetGameForUser(userId, true, false, false);
             if (gameLobby != null)
             {
+                await Groups.RemoveFromGroupAsync(Context.ConnectionId, LOBBY_NAME);
                 await Groups.AddToGroupAsync(Context.ConnectionId, gameLobby.Id.ToString());
                 await Clients.Group(gameLobby.Id.ToString()).SendAsync("PlayerConnected", new PlayerConnectedViewModel(gameLobby));
             }
@@ -158,6 +160,7 @@ namespace Web.Hubs
                 var gameRunning = await gameRepository.GetGameForUser(userId, false, true, false);
                 if (gameRunning != null)
                 {
+                    await Groups.RemoveFromGroupAsync(Context.ConnectionId, LOBBY_NAME);
                     await Groups.AddToGroupAsync(Context.ConnectionId, gameRunning.Id.ToString());
                     var question = await gameRepository.GetQuestion(gameRunning.Id);
                     if(question != null)
