@@ -162,7 +162,21 @@ var gameviewmodell = (function () {
         vm.state("lobby");
     };
 
-   
+    vm.sendMessage = function () {
+        var element = document.getElementById("messageInput");
+        var message = element.value;
+        element.disabled = true;
+        connection.sendMessage(message).then(function () {
+            element.value = "";
+            element.disabled = false;
+            element.focus();
+        }).catch(function (err) {
+            element.disabled = false;
+            element.focus();
+            return console.error(err.toString());
+        });
+        event.preventDefault();
+    };
     vm.onPlayersConnected = function callback(data) {
         var users = data.users, gameCanStart = data.gameCanStart, gameStarted = data.gameStarted;       
         vm.players.removeAll();

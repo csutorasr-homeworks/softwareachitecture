@@ -103,8 +103,6 @@ namespace Web.Repositories.Implementations
                 question.StartTime = DateTime.Now;
                 await dbContext.SaveChangesAsync();
             }
-            var random = new Random();
-            question.Question.Answers = question.Question.Answers.OrderBy(order => random.Next()).ToList();
             return question;
         }
         public async Task SelectAnswer(Guid gameId, string userId, Guid answerId)
