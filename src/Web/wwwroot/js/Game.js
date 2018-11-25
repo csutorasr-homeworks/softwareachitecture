@@ -6,13 +6,7 @@ function clearMessageList() {
     while (element.firstChild) { element.firstChild.remove(); }
 }
 
-connection.onRecieveMessage(function (user, message) {
-    var encodedMsg = user + ": " + message;
-    var li = document.createElement("li");
-    li.textContent = encodedMsg;
-    document.getElementById("messagesList").appendChild(li);
-    li.scrollIntoView();
-});
+
 
 
 
@@ -312,7 +306,13 @@ var gameviewmodell = (function () {
     connection.onQuestionsRecieved(vm.onQuestionRecieved);
     connection.onGameEnded(vm.onGameEnded);
     connection.onGameListUpdate(vm.onGameListUpdate);
-
+    connection.onRecieveMessage(function (user, message) {
+        var encodedMsg = user + ": " + message;
+        var li = document.createElement("li");
+        li.textContent = encodedMsg;
+        document.getElementById("messagesList").appendChild(li);
+        li.scrollIntoView();
+    });
     vm.showErrorMessag = function (message) {
         console.log(message);
     };

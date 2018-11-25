@@ -9,7 +9,7 @@ window.connection = (function () {
         },
 
         onRecieveMessage: function (callBack) {
-            connection.on("RecieveMessage", callBack);
+            connection.on("ReceiveMessage", callBack);
         },
         sendMessage: function (message) {
             return connection.invoke("SendMessage", message);
