@@ -13,9 +13,9 @@ namespace Web.ViewModels
         {
             foreach (GameSession game in list)
             {
-
                 games.Add(new GameViewModel
                 {
+                    Code = game.Code,
                     GameId = game.Id,
                     MaxUsers = game.MaxUsers
                 });
@@ -25,7 +25,7 @@ namespace Web.ViewModels
 
     internal class GameViewModel
     {
-
+        public string Code { get; set; }
         public Guid GameId { get; set; }
         public int MaxUsers { get; set; }
         public Guid QuestionNr { get; set; }

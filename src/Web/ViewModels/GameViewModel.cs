@@ -10,6 +10,7 @@ namespace Web.ViewModels
         public PlayerConnectedViewModel(GameSession game)
         {
             this.GameId = game.Id;
+            Code = game.Code;
             this.Users = new List<UserViewModel>();
             foreach(UserGameSessions user  in game.Users){
                 Users.Add(new UserViewModel(user));
@@ -19,6 +20,7 @@ namespace Web.ViewModels
         }
 
         public Guid GameId { get; set; }
+        public string Code { get; set; }
         public Boolean GameCanStart { get; set; }
         public Boolean GameStarted { get; set; }
 
