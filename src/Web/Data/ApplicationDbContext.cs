@@ -16,5 +16,8 @@ namespace Web.Data
 
         public DbSet<GameSession> GameSessions { get; set; }
         public DbSet<UserGameSessions> UserGameSessions { get; set; }
+        public DbSet<QuestionCategory> QuestionCategories { get; set; }
+        public DbSet<Question> Questions { get; set; }
+        public DbSet<Answer> Answers { get; set; }
     }
 }
