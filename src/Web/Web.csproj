@@ -23,4 +23,11 @@
     <Folder Include="Areas\Identity\Services\" />
   </ItemGroup>
 
+
+  <ItemGroup>
+    <Content Update="questions.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
