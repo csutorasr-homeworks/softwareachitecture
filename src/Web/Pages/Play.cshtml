@@ -145,7 +145,7 @@
             <div class="card-body messagebox">
                 <h2 class="card-title">Lobby</h2>
                 <ul id="messagesList"></ul>
-                <form id="lobbyMessage">
+                <form id="lobbyMessage" data-bind="submit:sendMessage">
                     <div class="input-group mb-3">
                         <input type="text" id="messageInput" class="form-control" placeholder="message" />
                         <div class="input-group-append">

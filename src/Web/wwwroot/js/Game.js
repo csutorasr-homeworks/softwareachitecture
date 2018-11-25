@@ -6,13 +6,6 @@ function clearMessageList() {
     while (element.firstChild) { element.firstChild.remove(); }
 }
 
-//function joinGame(game) {
-//    var createJoin = document.getElementById("createJoin");
-//    var startGame = document.getElementById("startGame");
-//    createJoin.style.display = "none";
-//    startGame.style.display = "block";
-//}
-
 connection.onRecieveMessage(function (user, message) {
     var encodedMsg = user + ": " + message;
     var li = document.createElement("li");
@@ -20,42 +13,6 @@ connection.onRecieveMessage(function (user, message) {
     document.getElementById("messagesList").appendChild(li);
     li.scrollIntoView();
 });
-
-
-//document.getElementById("lobbyMessage").addEventListener("submit", function (event) {
-//    var element = document.getElementById("messageInput");
-//    var message = element.value;
-//    element.disabled = true;
-//    connection.invoke("SendMessage", message).then(function () {
-//        element.value = "";
-//        element.disabled = false;
-//        element.focus();
-//    }).catch(function (err) {
-//        element.disabled = false;
-//        element.focus();
-//        return console.error(err.toString());
-//    });
-//    event.preventDefault();
-//});
-
-//document.getElementById("create-game").addEventListener("click", function (event) {
-//    var code = document.getElementById('codeInput').value;
-//    clearMessageList();
-//    connection.invoke("CreateGame", code).then(function (game) {
-//    }).catch(function (err) {
-//        return console.error(err.toString());
-//    });
-//});
-
-//document.getElementById("join-game").addEventListener("click", function (event) {
-//    var code = document.getElementById('codeInput').value;
-//    clearMessageList();
-//    connection.invoke("JoinGame", code).then(function (game) {
-//        joinGame(game);
-//    }).catch(function (err) {
-//        return console.error(err.toString());
-//    });
-//}); 
 
 var dummyGame = {
 
@@ -295,6 +252,22 @@ var gameviewmodell = (function () {
         connection.invokeGetGames();
         vm.players.removeAll();
         vm.state("lobby");
+    };
+
+    vm.sendMessage = function () {
+        var element = document.getElementById("messageInput");
+        var message = element.value;
+        element.disabled = true;
+        connection.sendMessage(message).then(function () {
+            element.value = "";
+            element.disabled = false;
+            element.focus();
+        }).catch(function (err) {
+            element.disabled = false;
+            element.focus();
+            return console.error(err.toString());
+        });
+        event.preventDefault();
     };
 
     vm.currentUser = {

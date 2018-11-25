@@ -11,6 +11,9 @@ window.connection = (function () {
         onRecieveMessage: function (callBack) {
             connection.on("RecieveMessage", callBack);
         },
+        sendMessage: function (message) {
+            return connection.invoke("SendMessage", message);
+        },
 
         /* Csatlakoztatja a usert egy játékhoz 
          * Arguments:
