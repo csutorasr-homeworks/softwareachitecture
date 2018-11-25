@@ -52,6 +52,11 @@ namespace Web.Hubs
         public async Task CreateGame(string code,int nrOfPlayers,int nrOfQuestions)
         {
             var userId = Context.UserIdentifier;
+            if (await gameRepository.GetGameForUser(userId, true, false, false) != null || await gameRepository.GetGameForUser(userId, false, true, false) != null)
+            {
+                // TODO: error handling
+                return;
+            }
             var game = await gameRepository.CreateGame(System.Guid.NewGuid().ToString());
             await JoinGame(game.Id.ToString());
             await GetGames();
