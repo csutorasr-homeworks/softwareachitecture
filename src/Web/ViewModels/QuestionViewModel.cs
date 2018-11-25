@@ -1,14 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using Web.Models;
 
 namespace Web.ViewModels
 {
     public class QuestionViewModel
     {
-        public Guid Id { get; set; }
-        public Guid Text { get; set; }
+        public QuestionViewModel(GameQuestion question, bool showCorrect = false)
+        {
+            GameQuestionId = question.Id;
+            QuestionId = question.Question.Id;
+            Text = question.Question.Text;
+            Answers = question.Question.Answers.Select(x => new Answer
+            {
+                Id = x.Id,
+                Text = x.Text,
+                UserIdsSelected = question.UserSelectedAnswers.Where(u => u.AnswerId == x.Id).Select(u => u.UserGameSession.UserId)
+            });
+            if (showCorrect)
+            {
+                CorrectAnswerId = question.Question.Answers.First(x => x.IsCorrect).Id;
+            }
+        }
+        public Guid GameQuestionId { get; set; }
+        public Guid QuestionId { get; set; }
+        public string Text { get; set; }
         public IEnumerable<Answer> Answers { get; set; }
         public class Answer
         {
