@@ -7,7 +7,7 @@ namespace Web.Models
         public Guid Id { get; set; }
         public Guid GameQuestionId { get; set; }
         public GameQuestion GameQuestion { get; set; }
-        public string UserGameSessionId { get; set; }
+        public Guid UserGameSessionId { get; set; }
         public UserGameSessions UserGameSession { get; set; }
         public Guid AnswerId { get; set; }
         public Answer Answer { get; set; }
