@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
@@ -9,6 +9,7 @@ using Web.Repositories;
 
 namespace Web.Pages.Questions
 {
+    [Authorize]
     public class IndexModel : PageModel
     {
         private readonly IQuestionRepository repository;
