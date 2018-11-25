@@ -23,7 +23,7 @@ namespace Web.Pages.Questions
 
         public async Task OnGetAsync()
         {
-            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             Question = await repository.GetQuestionForUser(new Guid(userId));
         }
     }

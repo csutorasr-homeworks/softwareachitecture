@@ -9,5 +9,6 @@ namespace Web.Repositories
     {
         Task AddQuestion(Guid userId, string text, string correctAnswer, IEnumerable<string> incorrectAnswers);
         Task<IEnumerable<Question>> GetQuestionForUser(Guid userId);
+        Task<Question> GetQuestion(Guid value);
     }
 }

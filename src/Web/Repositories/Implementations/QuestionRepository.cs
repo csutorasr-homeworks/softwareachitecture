@@ -43,5 +43,10 @@ namespace Web.Repositories
             await dbContext.Questions.AddAsync(question);
             await dbContext.SaveChangesAsync();
         }
+
+        public Task<Question> GetQuestion(Guid value)
+        {
+            return dbContext.Questions.Include(x => x.Answers).FirstOrDefaultAsync(x => x.Id == value);
+        }
     }
 }
