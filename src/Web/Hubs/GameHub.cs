@@ -57,7 +57,7 @@ namespace Web.Hubs
                 // TODO: error handling
                 return;
             }
-            var game = await gameRepository.CreateGame(System.Guid.NewGuid().ToString());
+            var game = await gameRepository.CreateGame(System.Guid.NewGuid().ToString(), nrOfQuestions, nrOfPlayers );
             await JoinGame(game.Id.ToString());
             await GetGames();
         }
@@ -120,7 +120,7 @@ namespace Web.Hubs
                 await gameRepository.SelectAnswer(gameSession.Id, userId, new System.Guid(answerId));
 
                 var question = await gameRepository.GetQuestion(gameSession.Id);
-                await Clients.Group(gameSession.Id.ToString()).SendAsync("QuestionRecieved", new QuestionViewModel(question,true));
+                await Clients.Group(gameSession.Id.ToString()).SendAsync("QuestionRecieved", new QuestionViewModel(question, question.UserSelectedAnswers.Count == gameSession.Users.Count));
                 if (question.UserSelectedAnswers.Count == gameSession.Users.Count)
                 {
                     if(gameSession.CurrentQuestion >= gameSession.QuestionCount-1)
@@ -128,14 +128,14 @@ namespace Web.Hubs
                         gameSession.InProgress = false;
                         gameSession.Finnished = true;
                         await gameRepository.UpdateGame(gameSession);
-                        System.Threading.Thread.Sleep(3000);
-                       // await Clients.Group(gameSession.Id.ToString()).SendAsync("GameEnded", new GameEndedViewModel(question, true));
+                        System.Threading.Thread.Sleep(2000);
+                        await Clients.Group(gameSession.Id.ToString()).SendAsync("GameEnded", new ResultViewModel(await gameRepository.GetResults(gameSession.Id)));
                     }
                     else
                     {
                         gameSession.CurrentQuestion++;
                         await gameRepository.UpdateGame(gameSession);
-                        System.Threading.Thread.Sleep(3000);
+                        System.Threading.Thread.Sleep(2000);
                         question = await gameRepository.GetQuestion(gameSession.Id);
                         await Clients.Group(gameSession.Id.ToString()).SendAsync("QuestionRecieved", new QuestionViewModel(question));
                     }

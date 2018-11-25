@@ -292,6 +292,7 @@ var gameviewmodell = (function () {
     };
 
     vm.gotoLobby = function () {
+        connection.invokeGetGames();
         vm.players.removeAll();
         vm.state("lobby");
     };
@@ -442,10 +443,17 @@ var gameviewmodell = (function () {
         connection.invokeSendGuess(id);
     };
     vm.gameResults = ko.observableArray();
-    vm.onGameEnded = function (scores) {
+    vm.onGameEnded = function (results) {
+        var scores = [];
+        for (var userId in results.sumPointsByUser) {
+            scores.push({
+                userId: userId,
+                points: results.sumPointsByUser[userId]
+            });
+        }
         vm.gameResults.removeAll();
         scores.sort(function (a, b) {
-            return b.Points - a.Points;
+            return b.points - a.points;
         });
         var lastScore = -1;
         var place = 1;
@@ -454,21 +462,23 @@ var gameviewmodell = (function () {
             var score = scores[i];
             var player = vm.players().find(x => x.user.userId === score.userId);
             gameResultVM.color = player.color.class;
-            gameResultVM.points = score.Points;
+            gameResultVM.points = score.points;
             gameResultVM.startText = "";
             gameResultVM.endText = ".";
             if (player.user.Id === vm.currentUser.Id) {
                 gameResultVM.startText = "You scored ";
                 if (place !== 1) {
                     gameResultVM.endText = ". Better luck next time! ";
+                } else {
+                    gameResultVM.endText = ". Congratulations you won! ";
                 }
             } else {
                 gameResultVM.startText = player.user.userName + " scored";
             }
             gameResultVM.place = place;
-            if (lastScore !== score.Points) {
+            if (lastScore !== score.points) {
                 place++;
-                lastScore = score.Points;
+                lastScore = score.points;
             }
             vm.gameResults.push(gameResultVM);
         }
