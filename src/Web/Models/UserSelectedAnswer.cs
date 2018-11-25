@@ -18,7 +18,16 @@ namespace Web.Models
         {
             get
             {
-                return 100 - (int)(AnswerTime - GameQuestion.StartTime).TotalMilliseconds / 100;
+                if (Answer.IsCorrect)
+                {
+                    var time = (int)(AnswerTime - GameQuestion.StartTime).TotalMilliseconds / 100;
+                    if (time > 100)
+                    {
+                        return 0;
+                    }
+                    return 100 - time;
+                }
+                return -50;
             }
         }
     }
