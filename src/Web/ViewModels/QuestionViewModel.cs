@@ -12,11 +12,12 @@ namespace Web.ViewModels
             GameQuestionId = question.Id;
             QuestionId = question.Question.Id;
             Text = question.Question.Text;
+            QuestionStartTime = question.StartTime;
             Answers = question.Question.Answers.Select(x => new Answer
             {
                 Id = x.Id,
                 Text = x.Text,
-                UserIdsSelected = question.UserSelectedAnswers.Where(u => u.AnswerId == x.Id).Select(u => u.UserGameSession.UserId)
+                UserIdsSelected = question.UserSelectedAnswers.Where(u => u.AnswerId == x.Id).ToDictionary(u => u.UserGameSession.UserId, u => u.AnswerTime)
             });
             if (showCorrect)
             {
@@ -26,12 +27,13 @@ namespace Web.ViewModels
         public Guid GameQuestionId { get; set; }
         public Guid QuestionId { get; set; }
         public string Text { get; set; }
+        public DateTime QuestionStartTime { get; set; }
         public IEnumerable<Answer> Answers { get; set; }
         public class Answer
         {
             public Guid Id { get; set; }
             public string Text { get; set; }
-            public IEnumerable<string> UserIdsSelected { get; set; }
+            public IDictionary<string, DateTime> UserIdsSelected { get; set; }
         }
         public Guid CorrectAnswerId { get; set; }
     }

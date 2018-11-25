@@ -24,6 +24,7 @@ namespace Web.Data
                 var questions = json.Select(q => new Models.Question
                 {
                     QuestionCategory = categories.FirstOrDefault(x => x.Name == q.category),
+                    Text = q.question,
                     Answers = q.incorrect_answers.Select(x => new Models.Answer
                     {
                         IsCorrect = false,

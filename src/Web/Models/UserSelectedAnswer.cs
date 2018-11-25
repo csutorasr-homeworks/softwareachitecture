@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Web.Models
 {
@@ -12,5 +13,13 @@ namespace Web.Models
         public Guid AnswerId { get; set; }
         public Answer Answer { get; set; }
         public DateTime AnswerTime { get; set; }
+        [NotMapped]
+        public int Points
+        {
+            get
+            {
+                return 100 - (int)(AnswerTime - GameQuestion.StartTime).TotalMilliseconds / 100;
+            }
+        }
     }
 }
