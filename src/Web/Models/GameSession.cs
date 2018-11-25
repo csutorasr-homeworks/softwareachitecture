@@ -11,6 +11,7 @@ namespace Web.Models
         public bool WaitingForPlayers { get; set; }
         public bool InProgress { get; set; }
         public bool Finnished { get; set; }
+        public int MaxUsers { get; set; }
         public ICollection<UserGameSessions> Users { get; set; }
     }
 }

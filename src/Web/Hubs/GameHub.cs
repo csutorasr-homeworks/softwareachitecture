@@ -61,13 +61,15 @@ namespace Web.Hubs
             var gameIdGuid = new System.Guid(gameId);
             var userIdGuid = new System.Guid(userId);
             var currentPlayers = await userGameSessionRepository.GetAllForGame(gameIdGuid);
+            //TODO check for game state waiting
+            //TODO check for maxusers
             if(!currentPlayers.Exists(x=> x.UserId == userIdGuid))
             {
                 await userGameSessionRepository.Add(gameIdGuid, new System.Guid(userId));
             }
             var game = await gameRepository.GetGame(gameIdGuid);
             await Groups.AddToGroupAsync(Context.ConnectionId, gameId);
-            await Clients.Group(game.Id.ToString()).SendAsync("PlayerConnected", new PlayerConnectedViewModel(game, false));            
+            await Clients.Group(game.Id.ToString()).SendAsync("PlayerConnected", new PlayerConnectedViewModel(game));            
         }
 
         public async Task GetGames()
@@ -77,12 +79,19 @@ namespace Web.Hubs
 
         public async Task StartGame()
         {
-            //var userId = Context.UserIdentifier;
-            //var gameIdGuid = new System.Guid(gameId);
-            //await gameRepository.JoinGame(gameId, userId);
-            //var game = await gameRepository.GetGame(gameIdGuid);
-            //await Groups.AddToGroupAsync(Context.ConnectionId, game.Id.ToString());
-            //await Clients.Group(game.Id.ToString()).SendAsync("PlayerConnected", new PlayerConnectedViewModel(game, false));
+            var userId = Context.UserIdentifier;
+            var gameSession = await gameRepository.GetGameForUser(new System.Guid(userId), true, false, false);
+            if (gameSession != null)
+            {
+                gameSession.WaitingForPlayers = false;
+                gameSession.InProgress = true;
+                gameSession = await gameRepository.UpdateGame(gameSession);
+                await Clients.Group(gameSession.Id.ToString()).SendAsync("PlayerConnected", new PlayerConnectedViewModel(gameSession));
+            }
+            else
+            {
+                //todo handle if already started
+            }
 
         }
 

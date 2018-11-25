@@ -69,5 +69,18 @@ namespace Web.Repositories.Implementations
             var games = await dbContext.GameSessions.AsNoTracking().Where(x => x.WaitingForPlayers).Take(10).ToListAsync();
             return games;
         }
+
+        public async Task<GameSession> GetGameForUser(Guid userId, bool waiting, bool inprogress, bool ended)
+        {
+            var game = await dbContext.GameSessions.AsNoTracking().Where(x => x.WaitingForPlayers == waiting && x.InProgress == inprogress && x.Finnished == ended).FirstOrDefaultAsync(x => x.Users.Any(y => y.UserId == userId) );
+            return game;
+        }
+        
+        public async Task<GameSession> UpdateGame(GameSession game)
+        {
+            dbContext.Attach(game);
+            await dbContext.SaveChangesAsync();
+            return game;
+        }
     }
 }

@@ -7,15 +7,15 @@ namespace Web.Hubs
     internal class PlayerConnectedViewModel
     {
 
-        public PlayerConnectedViewModel(GameSession game, Boolean Started)
+        public PlayerConnectedViewModel(GameSession game)
         {
             this.GameId = game.Id;
             this.Users = new List<UserViewModel>();
             foreach(UserGameSessions user  in game.Users){
                 Users.Add(new UserViewModel(user));
             }
-            GameCanStart = game.Users.Count >= 2;
-            GameStarted = Started;
+            GameCanStart = game.Users.Count == game.MaxUsers;
+            GameStarted = game.InProgress == true;
         }
 
         public Guid GameId { get; set; }
