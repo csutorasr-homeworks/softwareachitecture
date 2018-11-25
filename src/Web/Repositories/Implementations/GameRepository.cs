@@ -129,5 +129,21 @@ namespace Web.Repositories.Implementations
             await dbContext.UserSelectedAnswers.AddAsync(selectedAnswer);
             await dbContext.SaveChangesAsync();
         }
+
+        public Task<GameSession> GetResults(Guid gameId)
+        {
+            return dbContext.GameSessions
+                .Where(x => x.Id == gameId)
+                .Include(x => x.Questions)
+                .ThenInclude(x => x.Question)
+                .Include(x => x.Questions)
+                .ThenInclude(x => x.UserSelectedAnswers)
+                .ThenInclude(x => x.Answer)
+                .Include(x => x.Questions)
+                .ThenInclude(x => x.UserSelectedAnswers)
+                .ThenInclude(x => x.UserGameSession)
+                .ThenInclude(x => x.User)
+                .FirstOrDefaultAsync();
+        }
     }
 }
