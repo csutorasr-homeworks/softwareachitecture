@@ -95,7 +95,6 @@ namespace Web.Hubs
             }
 
         }
-
         public async Task GetGameByCode(string code)
         {
             var game = await gameRepository.GetGameByCode(code);
