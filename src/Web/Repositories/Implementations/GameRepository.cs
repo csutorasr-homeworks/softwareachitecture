@@ -34,6 +34,7 @@ namespace Web.Repositories.Implementations
                     QuestionId = x.Id,
                 }).ToListAsync(),
                 MaxUsers = maxUsers,
+                QuestionCount = questionCount
             };
 
             await dbContext.GameSessions.AddAsync(game);

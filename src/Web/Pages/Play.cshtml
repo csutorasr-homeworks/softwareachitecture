@@ -111,9 +111,9 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row player-points-row" data-bind="foreach:scoreVMs">
+                            @*<div class="row player-points-row" data-bind="foreach:scoreVMs">
                                 <div class="col player-point" data-bind="css:color"><span data-bind="text:name"></span> has <span data-bind="text:points"></span> points</div>
-                            </div>
+                            </div>*@
                         </div>
 
                     </div>
@@ -135,6 +135,7 @@
                     <!-- /ko -->
                     <div class="row player-points-row">
                         <div class="player-point col"><button class="btn" data-bind="click:gotoLobby">Go start another game!</button></div>
+                        <div class="player-point col"><button class="btn" data-bind="click:gotoGameStats">Check out detailed stats!</button></div>
                     </div>
                 </div>
             </div>
