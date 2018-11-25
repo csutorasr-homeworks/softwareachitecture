@@ -12,7 +12,6 @@ namespace Web.Hubs
     public class GameHub : Hub
     {
         private const string LOBBY_NAME = "lobby";
-        private static readonly Dictionary<string, string> userGroups = new Dictionary<string, string>();
         private readonly IGameRepository gameRepository;
         private readonly IUserGameSessionRepository userGameSessionRepository;
 
@@ -35,18 +34,14 @@ namespace Web.Hubs
 
         public async Task SendMessage(string message)
         {
-            await CurrentGroupUsers().SendAsync("ReceiveMessage", GetUserName(), message);
+            var userId = Context.UserIdentifier;
+            var gameLobby = await gameRepository.GetGameForUser(userId, true, false, false);
+            await Clients.Groups(gameLobby?.Id.ToString() ?? LOBBY_NAME).SendAsync("ReceiveMessage", GetUserName(), message);
         }
 
         private async Task AddToLobby()
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, LOBBY_NAME);
-            userGroups.Add(Context.ConnectionId, LOBBY_NAME);
-        }
-
-        private IClientProxy CurrentGroupUsers()
-        {
-            return Clients.Group(userGroups[Context.ConnectionId]);
         }
         
         public async Task CreateGame(string code,int nrOfPlayers,int nrOfQuestions)
