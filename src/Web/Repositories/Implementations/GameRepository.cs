@@ -16,9 +16,8 @@ namespace Web.Repositories.Implementations
         {
             this.dbContext = dbContext;
         }
-        
 
-        public async Task<GameSession> CreateGame(string code,String creatorId)
+        public async Task<GameSession> CreateGame(string code, int questionCount, int maxUsers)
         {
             if (await dbContext.GameSessions.AnyAsync(x => x.Code == code))
             {
@@ -29,14 +28,18 @@ namespace Web.Repositories.Implementations
                 Code = code,
                 Finnished = false,
                 InProgress = false,
-                WaitingForPlayers = true
+                WaitingForPlayers = true,
+                Questions = await dbContext.Questions.OrderBy(x => Guid.NewGuid()).Take(questionCount).Select(x => new GameQuestion
+                {
+                    QuestionId = x.Id,
+                }).ToListAsync(),
+                MaxUsers = maxUsers,
             };
 
             await dbContext.GameSessions.AddAsync(game);
             await dbContext.SaveChangesAsync();
             return game;
         }
-
 
         public async Task<GameSession> JoinGame(string gameId, string userId)
         {

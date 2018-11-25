@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Web.Data;
 
 namespace Web.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181125164004_questionToGame")]
+    partial class questionToGame
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -194,17 +196,11 @@ namespace Web.Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<Guid?>("AddedById");
-
-                    b.Property<string>("AddedById1");
-
                     b.Property<Guid>("QuestionCategoryId");
 
                     b.Property<string>("Text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AddedById1");
 
                     b.HasIndex("QuestionCategoryId");
 
@@ -363,10 +359,6 @@ namespace Web.Data.Migrations
 
             modelBuilder.Entity("Web.Models.Question", b =>
                 {
-                    b.HasOne("Web.Models.User", "AddedBy")
-                        .WithMany()
-                        .HasForeignKey("AddedById1");
-
                     b.HasOne("Web.Models.QuestionCategory", "QuestionCategory")
                         .WithMany()
                         .HasForeignKey("QuestionCategoryId")

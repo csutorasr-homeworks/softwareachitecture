@@ -1,12 +1,13 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Web.Models;
 using Web.Repositories;
 using Web.Repositories.Interfaces;
 
 namespace Web.Hubs
 {
+    [Authorize]
     public class GameHub : Hub
     {
         private const string LOBBY_NAME = "lobby";
@@ -50,7 +51,7 @@ namespace Web.Hubs
         public async Task CreateGame(string code,int nrOfPlayers,int nrOfQuestions)
         {
             var userId = Context.UserIdentifier;
-            var game = await gameRepository.CreateGame(System.Guid.NewGuid().ToString(), userId);
+            var game = await gameRepository.CreateGame(System.Guid.NewGuid().ToString());
             await JoinGame(game.Id.ToString());
             await GetGames();
         }

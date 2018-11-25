@@ -7,7 +7,7 @@ namespace Web.Repositories
 {
     public interface IGameRepository
     {
-        Task<GameSession> CreateGame(string code, string userId);
+        Task<GameSession> CreateGame(string code, int questionCount = 10, int maxUsers = 4);
         Task<GameSession> JoinGame(string gameId, string userId);
         Task<GameSession> GetGame(Guid id);
         Task<GameSession> GetGameByCode(string code);

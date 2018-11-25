@@ -11,6 +11,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services.AddTransient<IGameRepository, GameRepository>();
             services.AddTransient<IUserGameSessionRepository, UserGameSessionRepository>();
+            services.AddTransient<IQuestionRepository, QuestionRepository>();
             return services;
         }
     }
