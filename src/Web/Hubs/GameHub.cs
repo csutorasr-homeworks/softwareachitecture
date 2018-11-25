@@ -50,7 +50,7 @@ namespace Web.Hubs
         public async Task CreateGame(string code)
         {
             var userId = Context.UserIdentifier;
-            var game = await gameRepository.CreateGame(System.Guid.NewGuid().ToString(), userId);
+            var game = await gameRepository.CreateGame(System.Guid.NewGuid().ToString());
             await JoinGame(game.Id.ToString());
             await GetGames();
         }
