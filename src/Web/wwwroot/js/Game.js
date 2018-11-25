@@ -131,6 +131,8 @@ var gameviewmodell = (function () {
         data.games.forEach(function (game) {
             vm.games.push({
                 gameId: game.gameId,
+                maxUsers: game.maxUsers,
+                questionNr: game.questionNr,
                 joinGame: function () {
                     connection.invokeJoinGame(game.gameId).catch(vm.onCreateOrJoinFailiure);
                 }
@@ -169,9 +171,11 @@ var gameviewmodell = (function () {
         });
         event.preventDefault();
     };
+    vm.gameId = ko.observable("");
     vm.onPlayersConnected = function callback(data) {
         var users = data.users, gameCanStart = data.gameCanStart, gameStarted = data.gameStarted;       
         vm.players.removeAll();
+        vm.gameId(data.gameId)
         for (var i = 0; i < users.length; i++) {
             let user = users[i];
             vm.players.push(new Player(user, vm.colors[i], user.userId === vm.currentUser.userId));

@@ -44,7 +44,7 @@
                     <!-- ko foreach:games-->
                     <div class="row player-points-row">
                         <div class="col player-point">
-                            <button class="btn w-50" id="join-game" data-bind="click:joinGame">Join game</button>
+                            <button class="btn w-100" id="join-game" data-bind="click:joinGame">Join game [<span data-bind="text:gameId"></span>] <b data-bind="text:questionNr"></b> questions, <b data-bind="text:maxUsers"></b> players</button>
                         </div>
                     </div>
                     <!-- /ko -->
@@ -55,7 +55,7 @@
             <div class="row waiting-row card">
                 <div class="col-md-12 mb-3 waiting-column">
                     <div class="row waiting-header-row">
-                        <div class="col-md-12 waiting-header"><h4>Waiting for players</h4></div>
+                        <div class="col-md-12 waiting-header"><h4>Waiting for players for game:</h4><p data-bind="text:gameId"></p></div>
                     </div>
                     <div class="row player-points-row">
                         <div class="player-point col"><button class="btn" data-bind="click:startPressed,enable:canStart">Start the game!</button></div>

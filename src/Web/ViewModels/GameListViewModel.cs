@@ -17,7 +17,8 @@ namespace Web.ViewModels
                 {
                     Code = game.Code,
                     GameId = game.Id,
-                    MaxUsers = game.MaxUsers
+                    MaxUsers = game.MaxUsers,
+                    QuestionNr = game.QuestionCount
                 });
             }
         }
@@ -28,6 +29,6 @@ namespace Web.ViewModels
         public string Code { get; set; }
         public Guid GameId { get; set; }
         public int MaxUsers { get; set; }
-        public Guid QuestionNr { get; set; }
+        public int QuestionNr { get; set; }
     }
 }
