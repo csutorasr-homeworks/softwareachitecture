@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Web.Models;
 using Web.Repositories;
+using Web.Repositories.Interfaces;
 
 namespace Web.Hubs
 {
@@ -11,10 +12,12 @@ namespace Web.Hubs
         private const string LOBBY_NAME = "lobby";
         private static readonly Dictionary<string, string> userGroups = new Dictionary<string, string>();
         private readonly IGameRepository gameRepository;
+        private readonly IUserGameSessionRepository userGameSessionRepository;
 
-        public GameHub(IGameRepository gameRepository)
+        public GameHub(IGameRepository gameRepository, IUserGameSessionRepository userGameSessionRepository)
         {
             this.gameRepository = gameRepository;
+            this.userGameSessionRepository = userGameSessionRepository;
         }
 
         public string GetUserName()
@@ -46,10 +49,43 @@ namespace Web.Hubs
 
         public async Task CreateGame(string code)
         {
-            var game = await gameRepository.CreateGame(code);
-            await Clients.Caller.SendAsync("JoinGame", game);
-            // TODO: move to new room
+            var userId = Context.UserIdentifier;
+            var game = await gameRepository.CreateGame(System.Guid.NewGuid().ToString(), userId);
+            await JoinGame(game.Id.ToString());
+            await GetGames();
         }
+
+        public async Task JoinGame(string gameId)
+        {
+            var userId = Context.UserIdentifier;
+            var gameIdGuid = new System.Guid(gameId);
+            var userIdGuid = new System.Guid(userId);
+            var currentPlayers = await userGameSessionRepository.GetAllForGame(gameIdGuid);
+            if(!currentPlayers.Exists(x=> x.UserId == userIdGuid))
+            {
+                await userGameSessionRepository.Add(gameIdGuid, new System.Guid(userId));
+            }
+            var game = await gameRepository.GetGame(gameIdGuid);
+            await Groups.AddToGroupAsync(Context.ConnectionId, gameId);
+            await Clients.Group(game.Id.ToString()).SendAsync("PlayerConnected", new PlayerConnectedViewModel(game, false));            
+        }
+
+        public async Task GetGames()
+        {
+            await Clients.All.SendAsync("GameListUpdate", new GameListViewModel(await gameRepository.GetAvailableGames()));
+        }
+
+        public async Task StartGame()
+        {
+            //var userId = Context.UserIdentifier;
+            //var gameIdGuid = new System.Guid(gameId);
+            //await gameRepository.JoinGame(gameId, userId);
+            //var game = await gameRepository.GetGame(gameIdGuid);
+            //await Groups.AddToGroupAsync(Context.ConnectionId, game.Id.ToString());
+            //await Clients.Group(game.Id.ToString()).SendAsync("PlayerConnected", new PlayerConnectedViewModel(game, false));
+
+        }
+
         public async Task GetGameByCode(string code)
         {
             var game = await gameRepository.GetGameByCode(code);

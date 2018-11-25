@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Web.Data;
 
 namespace Web.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181125124907_addedGameSession")]
+    partial class addedGameSession
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -140,12 +142,6 @@ namespace Web.Data.Migrations
 
                     b.Property<string>("Code");
 
-                    b.Property<bool>("Finnished");
-
-                    b.Property<bool>("InProgress");
-
-                    b.Property<bool>("WaitingForPlayers");
-
                     b.HasKey("Id");
 
                     b.ToTable("GameSessions");
@@ -182,6 +178,8 @@ namespace Web.Data.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed");
 
+                    b.Property<int>("Points");
+
                     b.Property<string>("SecurityStamp");
 
                     b.Property<bool>("TwoFactorEnabled");
@@ -208,8 +206,6 @@ namespace Web.Data.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<Guid>("GameSessionId");
-
-                    b.Property<int>("Points");
 
                     b.Property<Guid>("UserId");
 
@@ -277,7 +273,7 @@ namespace Web.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Web.Models.User", "User")
-                        .WithMany("Games")
+                        .WithMany("Users")
                         .HasForeignKey("UserId1");
                 });
 #pragma warning restore 612, 618

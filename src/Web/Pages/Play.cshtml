@@ -15,14 +15,16 @@
                     <div class="row mb-3">
                         <div class="input-group">
                             <input type="text" id="codeInput" class="form-control w-25" placeholder="code" />
+                            <button class="btn w-50" id="create-game" data-bind="click:createGame">Create new game</button>
+                        </div>
+                    </div>
+                    <!-- ko foreach:games-->
+                    <div class="row player-points-row">
+                        <div class="col player-point">
                             <button class="btn w-50" id="join-game" data-bind="click:joinGame">Join game</button>
                         </div>
                     </div>
-                    <div class="row mb-3">
-                        <div class="input-group">
-                            <button class="btn w-50" id="create-game">Create new game</button>
-                        </div>
-                    </div>
+                    <!-- /ko -->
                 </div>
             </div>
             <!-- /ko -->
@@ -37,7 +39,7 @@
                     </div>
                     <!-- ko foreach:players-->
                     <div class="row player-points-row">
-                        <div class="col player-point" data-bind="css:color.class"><span data-bind="text:user.UserName"></span></div>
+                        <div class="col player-point" data-bind="css:color.class"><span data-bind="text:user.userName"></span></div>
                     </div>
                     <!-- /ko -->
                 </div>
@@ -102,22 +104,11 @@
                     <div class="row ended-header-row">
                         <div class="col-md-12 ended-header"><h4>The game ended</h4></div>
                     </div>
+                    <!-- ko foreach:gameResults -->
                     <div class="row player-points-row">
-                        <div class="col player-point red">You placed 2nd with 15 points. Better luck next time</div>
+                        <div class="col player-point " style="text-align:left" data-bind="css:color"><b data-bind="text:place"></b><b>. </b><span data-bind="text:startText"></span> <b data-bind="text:points"></b> points<span data-bind="text:endText"></span></div>
                     </div>
-                    <div class="row player-points-row">
-                        <div class="player-point col green ">You placed 2nd with 15 points. Better luck next time</div>
-                    </div>
-                    <div class="row player-points-row">
-                        <div class="player-point col blue player-arrived">You won!!!</div>
-                    </div>
-                    <div class="row player-points-row">
-                        <div class="player-point col purple ">You placed 2nd with 15 points. Better luck next time;</div>
-                    </div>
-                    <div class="row player-points-row">
-                        <div class="player-point col black  ">You placed 2nd with 15 points. Better luck next time;</div>
-                    </div>
-
+                    <!-- /ko -->
                     <div class="row player-points-row">
                         <div class="player-point col"><button class="btn" data-bind="click:gotoLobby">Go start another game!</button></div>
                     </div>

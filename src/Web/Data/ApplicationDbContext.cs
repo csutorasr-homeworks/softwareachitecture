@@ -15,5 +15,6 @@ namespace Web.Data
         }
 
         public DbSet<GameSession> GameSessions { get; set; }
+        public DbSet<UserGameSessions> UserGameSessions { get; set; }
     }
 }

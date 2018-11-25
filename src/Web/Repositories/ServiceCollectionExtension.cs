@@ -1,5 +1,6 @@
 ﻿using Web.Repositories;
 using Web.Repositories.Implementations;
+using Web.Repositories.Interfaces;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -9,6 +10,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddQuizGame(this IServiceCollection services)
         {
             services.AddTransient<IGameRepository, GameRepository>();
+            services.AddTransient<IUserGameSessionRepository, UserGameSessionRepository>();
             return services;
         }
     }

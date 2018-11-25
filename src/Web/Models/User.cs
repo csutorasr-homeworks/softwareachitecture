@@ -5,7 +5,6 @@ namespace Web.Models
 {
     public class User : IdentityUser
     {
-        public int Points { get; set; }
-        public ICollection<UserGameSessions> Users { get; set; }
+        public ICollection<UserGameSessions> Games { get; set; }
     }
 }

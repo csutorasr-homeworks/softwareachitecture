@@ -64,64 +64,64 @@ var dummyGame = {
 
 var firstUsers = [ {
         Id: "User1",
-        UserName: "Almafa"
+        userName: "Almafa"
 }];
 var secondUsers = [ {
         Id: "User1",
-        UserName: "Almafa"
+        userName: "Almafa"
     }, {
         Id: "User2",
-        UserName: "Kortefa"
+        userName: "Kortefa"
     }];
 
 var thirdUsers = [{
         Id: "User1",
-        UserName: "Almafa"
+        userName: "Almafa"
     },{
         Id: "User2",
-        UserName: "Kortefa"
+        userName: "Kortefa"
     }, {
         Id: "User3",
-        UserName: "Szilvafa"
+        userName: "Szilvafa"
     }
 ];
 
 
 var scores1 = [{
-    UserId: thirdUsers[0].Id,
+    userId: thirdUsers[0].Id,
     Points: 0
 },
 {
-    UserId: thirdUsers[1].Id,
+    userId: thirdUsers[1].Id,
     Points: 0
 },
 {
-    UserId: thirdUsers[2].Id,
+    userId: thirdUsers[2].Id,
     Points: 0
     }];
 
 var scores2 = [{
-    UserId: thirdUsers[0].Id,
+    userId: thirdUsers[0].Id,
     Points: 0
 },
 {
-    UserId: thirdUsers[1].Id,
+    userId: thirdUsers[1].Id,
     Points: 0
 },
 {
-    UserId: thirdUsers[2].Id,
+    userId: thirdUsers[2].Id,
     Points: 0
     }];
 var scores3 = [{
-    UserId: thirdUsers[0].Id,
+    userId: thirdUsers[0].Id,
     Points: 5
 },
 {
-    UserId: thirdUsers[1].Id,
+    userId: thirdUsers[1].Id,
     Points: 0
 },
 {
-    UserId: thirdUsers[2].Id,
+    userId: thirdUsers[2].Id,
     Points: 1
 }];
 
@@ -167,7 +167,7 @@ var question3 = {
 };
 
 
-var simulate = true;
+var simulate = false;
 
 
 
@@ -236,35 +236,39 @@ var gameviewmodell = (function () {
     vm.joinGame = function () {
         var code = document.getElementById('codeInput').value;
         clearMessageList();
-        connection.invokeJoinGame(code).then(vm.onCreateOrJoinSuccess).catch(vm.onCreateOrJoinFailiure);
+        connection.invokeJoinGame(code).catch(vm.onCreateOrJoinFailiure);
     };
 
     vm.createGame = function () {
         var code = document.getElementById('codeInput').value;
         clearMessageList();
-        connection.invokeCreateGame(code).then(vm.onCreateOrJoinSuccess).catch(vm.onCreateOrJoinFailiure);
-    };
-    vm.onCreateOrJoinSuccess = function (success,errorMessage,game) {
-        if (success) {
-            vm.game(game);
-            simulateOnPlayersConnected();
-            vm.state("waiting");
-        } else {
-            vm.showErrorMessage(errorMessage);
-        }
+        connection.invokeCreateGame(code).catch(vm.onCreateOrJoinFailiure);
     };
     vm.onCreateOrJoinFailiure = function (err) {
-        if (simulate) {
-            vm.onCreateOrJoinSuccess(true, null, {
-
-            });
+        try {
+            return console.error(err.toString());
+        } catch (ex) {
+            console.error(x);
         }
-        return console.error(err.toString());
+    };
+    vm.games = ko.observableArray().extend({ rateLimit: 500 });
+
+    vm.onGameListUpdate = function (data) {
+        vm.games.removeAll();
+        data.games.forEach(function (game) {
+            vm.games.push({
+                gameId: game.gameId,
+                joinGame: function () {
+                    connection.invokeJoinGame(game.gameId).catch(vm.onCreateOrJoinFailiure);
+                }
+            });
+        });
     };
 
     vm.connect = function () {
         connection.start().then(function () {
             vm.state("lobby");
+            connection.invokeGetGames();
         }).catch(function (err) {
             vm.state("failetoconnect");
             return console.error(err.toString());
@@ -272,24 +276,30 @@ var gameviewmodell = (function () {
     };
 
     vm.gotoLobby = function () {
+        vm.players.removeAll();
         vm.state("lobby");
     };
 
     vm.currentUser = {
-        Id: "User1",
-        UserNama: "Almafa"
+        userId: "9ec96fb2-1a0c-4c5b-9680-101a39162650",
+        userName: "zongorla@gmail.com"
     };
     vm.connectNr = null;
-    vm.onPlayersConnected = function callback(connectNr, users, gameCanStart, gameStarted) {
-        if (vm.connectNr === null || vm.connectNr <= connectNr) {
+    vm.onPlayersConnected = function callback(data) {
+        var connectNr = data.connectNr, users = data.users, gameCanStart = data.gameCanStart, gameStarted = data.gameStarted;
+        console.log(arguments);
+        if (vm.connectNr === null || vm.connectNr <= connectNr || true) {
             vm.connectNr = connectNr;
           
             vm.players.removeAll();
             for (var i = 0; i < users.length; i++) {
                 let user = users[i];
-                vm.players.push(new Player(user, vm.colors[i], user.Id === vm.currentUser.Id));
+                vm.players.push(new Player(user, vm.colors[i], user.userId === vm.currentUser.userId));
             }
             vm.canStart(gameCanStart);
+            if (vm.state() === "lobby") {
+                vm.state("waiting");
+            }
             if (gameStarted) {
                 if (vm.question() === null) {
                     var sub = vm.question.subscribe(function () {
@@ -343,7 +353,7 @@ var gameviewmodell = (function () {
             question.Guesses.forEach(function (guess, index) {
                 var guessVM = {
                     guess: guess.Guess,
-                    color: vm.players().find(x => x.user.Id === guess.Id).color.class,
+                    color: vm.players().find(x => x.user.userId === guess.userId).color.class,
                     width: "" + 100/ vm.players().length -1+ "%"
                 };
                 vm.guessVMs.push(guessVM);
@@ -387,6 +397,9 @@ var gameviewmodell = (function () {
                     vm.onQuestionRecieved(question2, scores2);
                     setTimeout(function () {
                         vm.onQuestionRecieved(question3, scores3);
+                        setTimeout(function () {
+                            vm.onGameEnded(scores3);
+                        }, 3000);
                     }, 3000);
                 }, 2000);
             }, 1000);
@@ -398,9 +411,9 @@ var gameviewmodell = (function () {
         vm.players().forEach(function (player) {
             var scoreVM = {
                 points: ko.observable(0),
-                userId: player.user.Id,
+                userId: player.user.userId,
                 color: player.color.class,
-                name: player.user.UserName
+                name: player.user.userName
             };
             vm.scoreVMs.push(scoreVM);
         });
@@ -408,20 +421,51 @@ var gameviewmodell = (function () {
     
     vm.onScoreRecieved = function (scores) {
         vm.scoreVMs().forEach(function (score) {
-            score.points(scores.find(x => x.UserId === score.userId).Points);
+            score.points(scores.find(x => x.userId === score.userId).Points);
         });
     };
 
     vm.sendGuess = function (id) {
         connection.invokeSendGuess(id);
     };
-    vm.onGameEnded = function() {
-
-    }
+    vm.gameResults = ko.observableArray();
+    vm.onGameEnded = function (scores) {
+        vm.gameResults.removeAll();
+        scores.sort(function (a, b) {
+            return b.Points - a.Points;
+        });
+        var lastScore = -1;
+        var place = 1;
+        for (var i = 0; i < scores.length; i++) {
+            var gameResultVM = {};
+            var score = scores[i];
+            var player = vm.players().find(x => x.user.userId === score.userId);
+            gameResultVM.color = player.color.class;
+            gameResultVM.points = score.Points;
+            gameResultVM.startText = "";
+            gameResultVM.endText = ".";
+            if (player.user.Id === vm.currentUser.Id) {
+                gameResultVM.startText = "You scored ";
+                if (place !== 1) {
+                    gameResultVM.endText = ". Better luck next time! ";
+                }
+            } else {
+                gameResultVM.startText = player.user.userName + " scored";
+            }
+            gameResultVM.place = place;
+            if (lastScore !== score.Points) {
+                place++;
+                lastScore = score.Points;
+            }
+            vm.gameResults.push(gameResultVM);
+        }
+        vm.state("ended");
+    };
 
     connection.onPlayerConnected(vm.onPlayersConnected);
     connection.onQuestionsRecieved(vm.onQuestionRecieved);
     connection.onGameEnded(vm.onGameEnded);
+    connection.onGameListUpdate(vm.onGameListUpdate);
 
     vm.showErrorMessag = function (message) {
         console.log(message);

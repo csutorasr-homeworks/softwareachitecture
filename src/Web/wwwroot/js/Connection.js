@@ -85,7 +85,15 @@ window.connection = (function () {
          */
         onGameEnded: function (callback) {
             connection.on("GameEnded", callback);
+        },
+        onGameListUpdate: function (callback) {
+            connection.on("GameListUpdate", callback);
+        },
+
+        invokeGetGames: function () {
+            return connection.invoke("GetGames");
         }
+
     };
     return connectionWrapper;
 }())

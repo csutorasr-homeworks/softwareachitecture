@@ -8,6 +8,9 @@ namespace Web.Models
     {
         public Guid Id { get; set; }
         public string Code { get; set; }
+        public bool WaitingForPlayers { get; set; }
+        public bool InProgress { get; set; }
+        public bool Finnished { get; set; }
         public ICollection<UserGameSessions> Users { get; set; }
     }
 }
