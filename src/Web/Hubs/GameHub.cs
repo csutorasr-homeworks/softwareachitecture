@@ -49,7 +49,6 @@ namespace Web.Hubs
             var userId = Context.UserIdentifier;
             if (await gameRepository.GetGameForUser(userId, true, false, false) != null || await gameRepository.GetGameForUser(userId, false, true, false) != null)
             {
-                // TODO: error handling
                 return;
             }
             var game = await gameRepository.CreateGame(System.Guid.NewGuid().ToString(), nrOfQuestions, nrOfPlayers );
@@ -63,8 +62,7 @@ namespace Web.Hubs
             var gameIdGuid = new System.Guid(gameId);
             var currentPlayers = await userGameSessionRepository.GetAllForGame(gameIdGuid);
             var game = await gameRepository.GetGame(gameIdGuid);
-            //TODO check for game state waiting
-            if (game.WaitingForPlayers)
+            if (game.WaitingForPlayers && game.Users.Count < game.MaxUsers)
             {
                 if (!currentPlayers.Exists(x => x.UserId == userId))
                 {
@@ -74,10 +72,6 @@ namespace Web.Hubs
                 await Groups.RemoveFromGroupAsync(Context.ConnectionId, LOBBY_NAME);
                 await Groups.AddToGroupAsync(Context.ConnectionId, gameId);
                 await Clients.Group(game.Id.ToString()).SendAsync("PlayerConnected", new PlayerConnectedViewModel(game));
-            }
-            else
-            {
-                //TODO check for maxusers     
             }
 
         }
@@ -101,11 +95,6 @@ namespace Web.Hubs
                 var question = await gameRepository.GetQuestion(gameSession.Id);
                 await Clients.Group(gameSession.Id.ToString()).SendAsync("QuestionRecieved", new QuestionViewModel(question));
             }
-            else
-            {
-                //todo handle if already started
-            }
-
         }
 
         public async Task<bool> SendGuess(string answerId)
