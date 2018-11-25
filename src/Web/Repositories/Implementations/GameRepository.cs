@@ -75,7 +75,7 @@ namespace Web.Repositories.Implementations
 
         public async Task<GameSession> GetGameForUser(string userId, bool waiting, bool inprogress, bool ended)
         {
-            var game = await dbContext.GameSessions.AsNoTracking().Where(x => x.WaitingForPlayers == waiting && x.InProgress == inprogress && x.Finnished == ended).FirstOrDefaultAsync(x => x.Users.Any(y => y.UserId == userId) );   
+            var game = await dbContext.GameSessions.Include(x => x.Users).ThenInclude(x => x.User).AsNoTracking().Where(x => x.WaitingForPlayers == waiting && x.InProgress == inprogress && x.Finnished == ended).FirstOrDefaultAsync(x => x.Users.Any(y => y.UserId == userId) );   
             return game;
         }
         
@@ -90,11 +90,6 @@ namespace Web.Repositories.Implementations
             var currentQuestion = await dbContext.GameSessions.Where(x => x.Id == gameId).Select(x => x.CurrentQuestion).FirstOrDefaultAsync();
             return await dbContext.GameQuestions
                 .Where(x => x.GameId == gameId)
-                .Include(x => x.Question)
-                .ThenInclude(x => x.Answers)
-                .Include(x => x.UserSelectedAnswers)
-                .ThenInclude(x => x.UserGameSession)
-                .Skip(currentQuestion)
                 .FirstOrDefaultAsync();
         }
         public async Task SelectAnswer(Guid gameId, string userId, Guid answerId)

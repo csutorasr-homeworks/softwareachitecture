@@ -361,42 +361,60 @@ var gameviewmodell = (function () {
     };
 
     vm.onQuestionRecieved = function (question,scores) {
-        var current = vm.question();
-        if (current === null || question.QuestionRecievedNr > current.QuestionRecievedNr) {
-            vm.guessVMs.removeAll();
-            vm.optionVMs.removeAll();
-            question.Guesses.forEach(function (guess, index) {
-                var guessVM = {
-                    guess: guess.Guess,
-                    color: vm.players().find(x => x.user.userId === guess.userId).color.class,
-                    width: "" + 100/ vm.players().length -1+ "%"
-                };
-                vm.guessVMs.push(guessVM);
-            });
-            question.Options.forEach(function (option, index) {
-                var status;
-                if (question.Answer === null) {
-                    status = "answer-unknown";
+        vm.guessVMs.removeAll();
+        vm.optionVMs.removeAll();
+        question.answers.forEach(function (answer,index) {
+            var status;
+            if (question.correctAnswerId === null) {
+                status = "answer-unknown";
+            } else {
+                if (answer.id === question.correctAnswerId) {
+                    status = "answer-correct";
                 } else {
-                    if (index === question.Answer) {
-                        status = "answer-correct";
-                    } else {
-                        status = "answer-wrong";
-                    }
+                    status = "answer-wrong";
                 }
-                var optionVM = {
-                    text: option,
-                    guesses: ko.observableArray(vm.guessVMs().filter(x => x.guess === index)),
-                    status: status,
-                    sendGuess :function () {
-                        vm.sendGuess(index);
-                    }
-                };
-                vm.optionVMs.push(optionVM);
-            });
-            vm.question(question);
-            vm.onScoreRecieved(scores);
-        }
+            }
+            var optionVM = {
+                text: option,
+                guesses: ko.observableArray(vm.guessVMs().filter(x => x.guess === index)),
+                status: status,
+                sendGuess: function () {
+                    vm.sendGuess(index);
+                }
+            };
+            vm.optionVMs.push(optionVM);
+        });
+        question.Guesses.forEach(function (guess, index) {
+            var guessVM = {
+                guess: guess.Guess,
+                color: vm.players().find(x => x.user.userId === guess.userId).color.class,
+                width: "" + 100/ vm.players().length -1+ "%"
+            };
+            vm.guessVMs.push(guessVM);
+        });
+        question.Options.forEach(function (option, index) {
+            var status;
+            if (question.Answer === null) {
+                status = "answer-unknown";
+            } else {
+                if (index === question.Answer) {
+                    status = "answer-correct";
+                } else {
+                    status = "answer-wrong";
+                }
+            }
+            var optionVM = {
+                text: option,
+                guesses: ko.observableArray(vm.guessVMs().filter(x => x.guess === index)),
+                status: status,
+                sendGuess :function () {
+                    vm.sendGuess(index);
+                }
+            };
+            vm.optionVMs.push(optionVM);
+        });
+        vm.question(question);
+        vm.onScoreRecieved(scores);
     };
 
 
@@ -436,7 +454,7 @@ var gameviewmodell = (function () {
     
     vm.onScoreRecieved = function (scores) {
         vm.scoreVMs().forEach(function (score) {
-            score.points(scores.find(x => x.userId === score.userId).Points);
+            score.points(scores.find(x => x.userId === score.userId).points);
         });
     };
 
