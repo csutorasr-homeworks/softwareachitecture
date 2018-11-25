@@ -96,6 +96,7 @@ namespace Web.Hubs
                 gameSession.WaitingForPlayers = false;
                 gameSession.InProgress = true;
                 gameSession = await gameRepository.UpdateGame(gameSession);
+                await GetGames();
                 await Clients.Group(gameSession.Id.ToString()).SendAsync("PlayerConnected", new PlayerConnectedViewModel(gameSession));
                 var question = await gameRepository.GetQuestion(gameSession.Id);
                 await Clients.Group(gameSession.Id.ToString()).SendAsync("QuestionRecieved", new QuestionViewModel(question));
