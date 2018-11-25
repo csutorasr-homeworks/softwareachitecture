@@ -49,7 +49,6 @@ namespace Web.Hubs
             var userId = Context.UserIdentifier;
             if (await gameRepository.GetGameForUser(userId, true, false, false) != null || await gameRepository.GetGameForUser(userId, false, true, false) != null)
             {
-                // TODO: error handling
                 return;
             }
             var game = await gameRepository.CreateGame(System.Guid.NewGuid().ToString(), nrOfQuestions, nrOfPlayers );
@@ -95,11 +94,6 @@ namespace Web.Hubs
                 var question = await gameRepository.GetQuestion(gameSession.Id);
                 await Clients.Group(gameSession.Id.ToString()).SendAsync("QuestionRecieved", new QuestionViewModel(question));
             }
-            else
-            {
-                //todo handle if already started
-            }
-
         }
 
         public async Task<bool> SendGuess(string answerId)

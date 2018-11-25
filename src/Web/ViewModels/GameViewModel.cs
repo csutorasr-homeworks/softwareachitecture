@@ -14,7 +14,7 @@ namespace Web.ViewModels
             foreach(UserGameSessions user  in game.Users){
                 Users.Add(new UserViewModel(user));
             }
-            GameCanStart = true;//TODO game.Users.Count == game.MaxUsers;
+            GameCanStart = true;
             GameStarted = game.InProgress == true;
         }
 
