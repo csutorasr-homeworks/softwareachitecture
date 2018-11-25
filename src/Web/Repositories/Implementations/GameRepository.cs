@@ -85,5 +85,13 @@ namespace Web.Repositories.Implementations
             await dbContext.SaveChangesAsync();
             return game;
         }
+        public async Task GetQuestion(int questionNumber)
+        {
+
+        }
+        public async Task SelectAnswer(Guid gameId, string userId, Guid answerId)
+        {
+
+        }
     }
 }

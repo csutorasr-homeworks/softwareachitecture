@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Web.Models
 {
@@ -10,5 +11,6 @@ namespace Web.Models
         public Guid GameSessionId { get; set; }
         public GameSession GameSession { get; set; }
         public int Points { get; set; }
+        public ICollection<UserSelectedAnswer> SelectedAnswers { get; set; }
     }
 }

@@ -14,5 +14,7 @@ namespace Web.Repositories
         Task<List<GameSession>> GetAvailableGames();
         Task<GameSession> GetGameForUser(string userId, bool waiting, bool inprogress, bool ended);
         Task<GameSession> UpdateGame(GameSession game);
+        Task GetQuestion(int questionNumber);
+        Task SelectAnswer(Guid gameId, string userId, Guid answerId);
     }
 }
