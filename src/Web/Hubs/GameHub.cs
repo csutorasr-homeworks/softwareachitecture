@@ -123,7 +123,7 @@ namespace Web.Hubs
                 await Clients.Group(gameSession.Id.ToString()).SendAsync("QuestionRecieved", new QuestionViewModel(question,true));
                 if (question.UserSelectedAnswers.Count == gameSession.Users.Count)
                 {
-                    if(gameSession.CurrentQuestion >= gameSession.QuestionCount)
+                    if(gameSession.CurrentQuestion >= gameSession.QuestionCount-1)
                     {
                         gameSession.InProgress = false;
                         gameSession.Finnished = true;
@@ -165,8 +165,11 @@ namespace Web.Hubs
                 {
                     await Groups.AddToGroupAsync(Context.ConnectionId, gameRunning.Id.ToString());
                     var question = await gameRepository.GetQuestion(gameRunning.Id);
-                    await Clients.Group(gameRunning.Id.ToString()).SendAsync("PlayerConnected", new PlayerConnectedViewModel(gameRunning));
-                    await Clients.Group(gameRunning.Id.ToString()).SendAsync("QuestionRecieved", new QuestionViewModel(question, question.UserSelectedAnswers.Count == gameRunning.Users.Count));
+                    if(question != null)
+                    {
+                        await Clients.Group(gameRunning.Id.ToString()).SendAsync("PlayerConnected", new PlayerConnectedViewModel(gameRunning));
+                        await Clients.Group(gameRunning.Id.ToString()).SendAsync("QuestionRecieved", new QuestionViewModel(question, question.UserSelectedAnswers.Count == gameRunning.Users.Count));
+                    }
                 }
             }
         
