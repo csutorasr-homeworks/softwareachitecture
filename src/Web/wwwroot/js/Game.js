@@ -69,8 +69,7 @@ var gameviewmodell = (function () {
     vm.gameResults = ko.observableArray();
 
     vm.currentUser = {
-        userId: "9ec96fb2-1a0c-4c5b-9680-101a39162650",
-        userName: "zongorla@gmail.com"
+        userId: document.getElementById("userId").value
     };
 
     vm.colors = [
@@ -161,6 +160,7 @@ var gameviewmodell = (function () {
         vm.players.removeAll();
         vm.state("lobby");
     };
+ 
 
     vm.sendMessage = function () {
         var element = document.getElementById("messageInput");
@@ -288,7 +288,7 @@ var gameviewmodell = (function () {
             gameResultVM.points = score.points;
             gameResultVM.startText = "";
             gameResultVM.endText = ".";
-            if (player.user.Id === vm.currentUser.Id) {
+            if (player.user.userId === vm.currentUser.userId) {
                 gameResultVM.startText = "You scored ";
                 if (place !== 1) {
                     gameResultVM.endText = ". Better luck next time! ";
