@@ -139,6 +139,8 @@ namespace Web.Repositories.Implementations
         {
             return dbContext.GameSessions
                 .Where(x => x.Id == gameId)
+                .Include(x => x.Users)
+                .ThenInclude(x => x.User)
                 .Include(x => x.Questions)
                 .ThenInclude(x => x.Question)
                 .Include(x => x.Questions)

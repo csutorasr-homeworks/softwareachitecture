@@ -10,7 +10,6 @@ namespace Web.Models
         public User User { get; set; }
         public Guid GameSessionId { get; set; }
         public GameSession GameSession { get; set; }
-        public int Points { get; set; }
         public ICollection<UserSelectedAnswer> SelectedAnswers { get; set; }
     }
 }

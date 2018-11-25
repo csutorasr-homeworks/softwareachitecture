@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Web.Models;
 
-namespace Web.Hubs
+namespace Web.ViewModels
 {
     internal class GameListViewModel
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using Web.Models;
 
-namespace Web.Hubs
+namespace Web.ViewModels
 {
     public class UserViewModel
     {
