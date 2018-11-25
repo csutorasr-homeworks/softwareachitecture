@@ -16,5 +16,6 @@ namespace Web.Repositories
         Task<GameSession> UpdateGame(GameSession game);
         Task<GameQuestion> GetQuestion(Guid gameId);
         Task SelectAnswer(Guid gameId, string userId, Guid answerId);
+        Task<GameSession> GetResults(Guid gameId);
     }
 }
