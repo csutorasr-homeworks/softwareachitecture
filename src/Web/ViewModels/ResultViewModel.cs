@@ -14,6 +14,7 @@ namespace Web.ViewModels
             QuestionsWithResult = gameSession.Questions.Select(q => new QuestionWithResult
             {
                 QuesetionId = q.QuestionId,
+                Text = q.Question.Text,
                 PointsByUser = q.UserSelectedAnswers.ToDictionary(u => u.UserGameSession.UserId, u => u.Points),
             }).ToList();
             SumPointsByUser = gameSession.Users.ToDictionary(
@@ -27,8 +28,9 @@ namespace Web.ViewModels
         public class QuestionWithResult
         {
             public Guid QuesetionId { get; set; }
+            public string Text { get; set; }
             public IDictionary<string, int> PointsByUser { get; set; }
         }
-        IDictionary<string, int> SumPointsByUser { get; set; }
+        public IDictionary<string, int> SumPointsByUser { get; set; }
     }
 }

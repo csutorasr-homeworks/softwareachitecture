@@ -1,0 +1,32 @@
+﻿@page
+@model Web.Pages.Games.IndexModel
+
+@{
+    ViewData["Title"] = "Played games";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h2>Played games</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.GameSession[0].Code)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.GameSession) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Code)
+            </td>
+            <td>
+                <a asp-page="./Details" asp-route-id="@item.Id">Details</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
