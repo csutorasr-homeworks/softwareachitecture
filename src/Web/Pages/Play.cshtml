@@ -1,5 +1,7 @@
 ﻿@page
 @model Web.Pages.PlayModel
+
+<input type="hidden" id="userId" value="@Model.UserId" />
 <div class="container gamearea" id="gamearea" data-bind="template: { name: 'gametemplate', data: gamevm, afterRender:gamevm.afterRender }">
 </div>
 <script type="text/html" id="gametemplate">
