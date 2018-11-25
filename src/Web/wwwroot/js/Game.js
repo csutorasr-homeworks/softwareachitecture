@@ -169,7 +169,33 @@ var question3 = {
 
 var simulate = false;
 
+class CreateGameViewModel {
+    constructor(connection) {
+        this.nrOfPlayers = ko.observable(4);
+        this.nrOfQuestions = ko.observable(5);
+        this.playerNumbers = [];
+        var i;
+        for (i = 2; i < 5; i++) {
+            this.playerNumbers.push(i);
+        }
+        this.questionNumbers = [];
+        for (i = 2; i < 10; i++) {
+            this.questionNumbers.push(i);
+        }
+        this.connection = connection;
+    }
 
+    createGame(){
+        clearMessageList();
+        this.connection.invokeCreateGame("almafa", this.nrOfPlayers(), this.nrOfQuestions()).catch(function (err) {
+            try {
+                return console.error(err.toString());
+            } catch (ex) {
+                console.error(x);
+            }
+        });
+    } 
+};
 
 var gameviewmodell = (function () {
     var vm = {};
@@ -229,7 +255,7 @@ var gameviewmodell = (function () {
     vm.endedVisible = ko.computed(function () {
         return vm.state() === "ended";
     });
-
+    vm.createGameVm = new CreateGameViewModel(connection);
     vm.game = ko.observable(null);
     vm.gameState = ko.observable();
 
@@ -239,18 +265,7 @@ var gameviewmodell = (function () {
         connection.invokeJoinGame(code).catch(vm.onCreateOrJoinFailiure);
     };
 
-    vm.createGame = function () {
-        var code = document.getElementById('codeInput').value;
-        clearMessageList();
-        connection.invokeCreateGame(code).catch(vm.onCreateOrJoinFailiure);
-    };
-    vm.onCreateOrJoinFailiure = function (err) {
-        try {
-            return console.error(err.toString());
-        } catch (ex) {
-            console.error(x);
-        }
-    };
+    
     vm.games = ko.observableArray().extend({ rateLimit: 500 });
 
     vm.onGameListUpdate = function (data) {

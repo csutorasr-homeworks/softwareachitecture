@@ -12,10 +12,34 @@
                     <div class="row lobby-header-row">
                         <div class="col-md-12 lobby-header"><h4>Join a room or create</h4></div>
                     </div>
-                    <div class="row mb-3">
-                        <div class="input-group">
-                            <input type="text" id="codeInput" class="form-control w-25" placeholder="code" />
-                            <button class="btn w-50" id="create-game" data-bind="click:createGame">Create new game</button>
+                    <div class="row mb-3"  data-bind="with: createGameVm">
+                        <div class="col-md-12 mb-3 lobby-column">
+                            <div class="row">
+                                <div class="col-3" >
+                                    <label for="sel1">Players:</label>
+                                </div>
+                                <div class="col-3">
+                                    <select class="form-control" id="sel1" data-bind="value:nrOfPlayers,options: playerNumbers">
+                                 
+                                    </select>
+                                </div>
+                                <div class="col-3">
+                                    <label for="sel1">Questions:</label>
+                                </div>
+                                <div class="col-3">
+                                    <select class="form-control" id="sel2" data-bind="value:nrOfQuestions,options: questionNumbers">
+                                  
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <input type="text" id="codeInput" class="form-control w-100" placeholder="code" />
+                                </div>
+                                <div class="col-6">
+                                    <button class="btn w-100" id="create-game" data-bind="click:createGame">Create new game</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <!-- ko foreach:games-->

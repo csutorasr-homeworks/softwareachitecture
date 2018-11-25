@@ -28,8 +28,8 @@ window.connection = (function () {
         /* Létrehoz egy játékot majd csatlakoztatja
          * A válasz ugyanaz mint a JoinGame         
          */
-        invokeCreateGame: function (code) {
-            return connection.invoke.call(connection, "CreateGame", code);
+        invokeCreateGame: function (code, nrOfPlayers, nrOfQuestions) {
+            return connection.invoke.call(connection, "CreateGame",code, nrOfPlayers, nrOfQuestions);
         },
 
         /* 

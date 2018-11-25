@@ -46,8 +46,8 @@ namespace Web.Hubs
         {
             return Clients.Group(userGroups[Context.ConnectionId]);
         }
-
-        public async Task CreateGame(string code)
+        
+        public async Task CreateGame(string code,int nrOfPlayers,int nrOfQuestions)
         {
             var userId = Context.UserIdentifier;
             var game = await gameRepository.CreateGame(System.Guid.NewGuid().ToString(), userId);
