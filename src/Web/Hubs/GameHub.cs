@@ -60,13 +60,12 @@ namespace Web.Hubs
         {
             var userId = Context.UserIdentifier;
             var gameIdGuid = new System.Guid(gameId);
-            var userIdGuid = new System.Guid(userId);
             var currentPlayers = await userGameSessionRepository.GetAllForGame(gameIdGuid);
             //TODO check for game state waiting
             //TODO check for maxusers
-            if(!currentPlayers.Exists(x=> x.UserId == userIdGuid))
+            if(!currentPlayers.Exists(x=> x.UserId == userId))
             {
-                await userGameSessionRepository.Add(gameIdGuid, new System.Guid(userId));
+                await userGameSessionRepository.Add(gameIdGuid, userId);
             }
             var game = await gameRepository.GetGame(gameIdGuid);
             await Groups.AddToGroupAsync(Context.ConnectionId, gameId);
@@ -81,7 +80,7 @@ namespace Web.Hubs
         public async Task StartGame()
         {
             var userId = Context.UserIdentifier;
-            var gameSession = await gameRepository.GetGameForUser(new System.Guid(userId), true, false, false);
+            var gameSession = await gameRepository.GetGameForUser(userId, true, false, false);
             if (gameSession != null)
             {
                 gameSession.WaitingForPlayers = false;

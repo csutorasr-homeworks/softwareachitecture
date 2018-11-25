@@ -8,7 +8,7 @@ namespace Web.Repositories.Interfaces
 {
     public interface IUserGameSessionRepository
     {
-        Task<UserGameSessions> Add(Guid game, Guid user);
+        Task<UserGameSessions> Add(Guid game, string user);
         Task<List<UserGameSessions>> GetAllForGame(Guid game);
     }
 }

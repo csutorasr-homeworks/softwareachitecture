@@ -14,7 +14,7 @@ namespace Web.Hubs
             this.UserName = user.User.UserName;
         }
 
-        public Guid UserId { get; set; }
+        public string UserId { get; set; }
         public string UserName { get; set; }
     }
 }

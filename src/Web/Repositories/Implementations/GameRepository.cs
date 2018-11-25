@@ -49,7 +49,7 @@ namespace Web.Repositories.Implementations
             var userGameSession = new UserGameSessions
             {
                 GameSessionId = new Guid(gameId),
-                UserId = new Guid(userId)
+                UserId = userId
             };
             await dbContext.UserGameSessions.AddAsync(userGameSession);
             await dbContext.SaveChangesAsync();
@@ -73,7 +73,7 @@ namespace Web.Repositories.Implementations
             return games;
         }
 
-        public async Task<GameSession> GetGameForUser(Guid userId, bool waiting, bool inprogress, bool ended)
+        public async Task<GameSession> GetGameForUser(string userId, bool waiting, bool inprogress, bool ended)
         {
             var game = await dbContext.GameSessions.AsNoTracking().Where(x => x.WaitingForPlayers == waiting && x.InProgress == inprogress && x.Finnished == ended).FirstOrDefaultAsync(x => x.Users.Any(y => y.UserId == userId) );   
             return game;
