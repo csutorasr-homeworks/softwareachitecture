@@ -283,6 +283,7 @@ var gameviewmodell = (function () {
     vm.connect = function () {
         connection.start().then(function () {
             vm.state("lobby");
+            connection.invokeReconnect();
             connection.invokeGetGames();
         }).catch(function (err) {
             vm.state("failetoconnect");
@@ -374,47 +375,24 @@ var gameviewmodell = (function () {
                     status = "answer-wrong";
                 }
             }
+            var quesses = answer.userIdsSelected.map(function (userId) {
+                return {
+                    color: vm.players().find(x => x.user.userId === userId).color.class,
+                    width: "" + 100 / vm.players().length - 1 + "%"
+                };
+            });
             var optionVM = {
-                text: option,
-                guesses: ko.observableArray(vm.guessVMs().filter(x => x.guess === index)),
+                text: answer.text,
+                guesses: ko.observableArray(quesses),
                 status: status,
                 sendGuess: function () {
-                    vm.sendGuess(index);
-                }
-            };
-            vm.optionVMs.push(optionVM);
-        });
-        question.Guesses.forEach(function (guess, index) {
-            var guessVM = {
-                guess: guess.Guess,
-                color: vm.players().find(x => x.user.userId === guess.userId).color.class,
-                width: "" + 100/ vm.players().length -1+ "%"
-            };
-            vm.guessVMs.push(guessVM);
-        });
-        question.Options.forEach(function (option, index) {
-            var status;
-            if (question.Answer === null) {
-                status = "answer-unknown";
-            } else {
-                if (index === question.Answer) {
-                    status = "answer-correct";
-                } else {
-                    status = "answer-wrong";
-                }
-            }
-            var optionVM = {
-                text: option,
-                guesses: ko.observableArray(vm.guessVMs().filter(x => x.guess === index)),
-                status: status,
-                sendGuess :function () {
-                    vm.sendGuess(index);
+                    vm.sendGuess(answer.id);
                 }
             };
             vm.optionVMs.push(optionVM);
         });
         vm.question(question);
-        vm.onScoreRecieved(scores);
+        //vm.onScoreRecieved(scores);
     };
 
 

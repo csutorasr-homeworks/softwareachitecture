@@ -71,7 +71,7 @@ window.connection = (function () {
           *  Ezután ha egy következő questionNr-rel küldi akkor megjelenitjuk azt (ezzel a küldéssel varhat a szerver 3 masodperced a helyes válazs kiküldése utan)
           */
         onQuestionsRecieved: function (callback) {
-            connection.on("QuestionsRecieved", callback);
+            connection.on("QuestionRecieved", callback);
         },
         /*lekuldi a tippjet a usernek , ilyenkor a backend QuestionsRecieved-et kuld az uj allapottal
          * returns:
@@ -92,6 +92,10 @@ window.connection = (function () {
 
         invokeGetGames: function () {
             return connection.invoke("GetGames");
+        },
+        
+        invokeReconnect: function () {
+            return connection.invoke("Reconnect");
         }
 
     };

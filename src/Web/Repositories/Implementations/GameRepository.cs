@@ -81,26 +81,31 @@ namespace Web.Repositories.Implementations
         
         public async Task<GameSession> UpdateGame(GameSession game)
         {
-            dbContext.Attach(game);
+            dbContext.Update(game);
             await dbContext.SaveChangesAsync();
             return game;
         }
         public async Task<GameQuestion> GetQuestion(Guid gameId)
         {
-            var currentQuestion = await dbContext.GameSessions.Where(x => x.Id == gameId).Select(x => x.CurrentQuestion).FirstOrDefaultAsync();
-            return await dbContext.GameQuestions
+            var currentQuestion = await dbContext.GameSessions.AsNoTracking().Where(x => x.Id == gameId).Select(x => x.CurrentQuestion).FirstOrDefaultAsync();
+            return await dbContext.GameQuestions.AsNoTracking()
                 .Where(x => x.GameId == gameId)
+                .Include(x => x.Question)
+                .ThenInclude(x => x.Answers)
+                .Include(x => x.UserSelectedAnswers)
+                .ThenInclude(x => x.UserGameSession)
+                .Skip(currentQuestion)
                 .FirstOrDefaultAsync();
         }
         public async Task SelectAnswer(Guid gameId, string userId, Guid answerId)
         {
             var answerTime = DateTime.Now;
-            var answer = await dbContext.Answers.Include(x => x.Question).FirstOrDefaultAsync(x => x.Id == answerId);
+            var answer = await dbContext.Answers.Include(x => x.Question).AsNoTracking().FirstOrDefaultAsync(x => x.Id == answerId);
             if (answer == null)
             {
                 throw new ArgumentException();
             }
-            var gameQuestion = await dbContext.GameQuestions
+            var gameQuestion = await dbContext.GameQuestions.AsNoTracking()
                 .Where(x => x.QuestionId == answer.QuestionId)
                 .Where(x => x.GameId == gameId)
                 .Where(x => x.Game.Users.Any(u => u.UserId == userId))
@@ -109,20 +114,25 @@ namespace Web.Repositories.Implementations
             {
                 throw new ArgumentException();
             }
-            var hasAnswered = await dbContext.UserSelectedAnswers.AnyAsync(x => x.GameQuestionId == gameQuestion.Id && x.UserGameSessionId == gameQuestion.GameId);
-            if (hasAnswered)
+            var userGameSession = await dbContext.UserGameSessions.AsNoTracking().FirstOrDefaultAsync(x => x.GameSessionId == gameQuestion.GameId && x.UserId == userId);
+
+            if (userGameSession == null)
             {
                 throw new ArgumentException();
             }
-            var selectedAnswer = new UserSelectedAnswer
+            var hasAnswered = await dbContext.UserSelectedAnswers.AsNoTracking().AnyAsync(x => x.GameQuestionId == gameQuestion.Id && x.UserGameSessionId == userGameSession.Id);
+            if (!hasAnswered)
             {
-                UserGameSessionId = gameQuestion.GameId,
-                AnswerId = answerId,
-                AnswerTime = answerTime,
-                GameQuestionId = gameQuestion.Id,
-            };
-            await dbContext.UserSelectedAnswers.AddAsync(selectedAnswer);
-            await dbContext.SaveChangesAsync();
+                var selectedAnswer = new UserSelectedAnswer
+                {
+                    UserGameSessionId = userGameSession.Id,
+                    AnswerId = answerId,
+                    AnswerTime = answerTime,
+                    GameQuestionId = gameQuestion.Id,
+                };
+                await dbContext.UserSelectedAnswers.AddAsync(selectedAnswer);
+                await dbContext.SaveChangesAsync();
+            }
         }
 
         public Task<GameSession> GetResults(Guid gameId)

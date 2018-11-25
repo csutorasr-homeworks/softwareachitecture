@@ -118,6 +118,28 @@ namespace Web.Hubs
             if (gameSession != null)
             {
                 await gameRepository.SelectAnswer(gameSession.Id, userId, new System.Guid(answerId));
+
+                var question = await gameRepository.GetQuestion(gameSession.Id);
+                await Clients.Group(gameSession.Id.ToString()).SendAsync("QuestionRecieved", new QuestionViewModel(question,true));
+                if (question.UserSelectedAnswers.Count == gameSession.Users.Count)
+                {
+                    if(gameSession.CurrentQuestion == gameSession.Questions.Count)
+                    {
+                        gameSession.InProgress = false;
+                        gameSession.Finnished = false;
+                        await gameRepository.UpdateGame(gameSession);
+                        System.Threading.Thread.Sleep(3000);
+                       // await Clients.Group(gameSession.Id.ToString()).SendAsync("GameEnded", new GameEndedViewModel(question, true));
+                    }
+                    else
+                    {
+                        gameSession.CurrentQuestion++;
+                        await gameRepository.UpdateGame(gameSession);
+                        System.Threading.Thread.Sleep(3000);
+                        question = await gameRepository.GetQuestion(gameSession.Id);
+                        await Clients.Group(gameSession.Id.ToString()).SendAsync("QuestionRecieved", new QuestionViewModel(question));
+                    }
+                }
                 return true;
             }
             else
@@ -126,9 +148,31 @@ namespace Web.Hubs
             }
         }
 
-        //public async Task SendScores(string GameId)
-        //{
-        //    await Clients.Group(GameId).SendAsync("PlayerConnected", new ScoreVievModel());
-        //}
+        public async Task<bool> Reconnect()
+        {
+
+            var userId = Context.UserIdentifier;
+            var gameLobby = await gameRepository.GetGameForUser(userId, true, false, false);
+            if (gameLobby != null)
+            {
+                await Groups.AddToGroupAsync(Context.ConnectionId, gameLobby.Id.ToString());
+                await Clients.Group(gameLobby.Id.ToString()).SendAsync("PlayerConnected", new PlayerConnectedViewModel(gameLobby));
+            }
+            else
+            {
+                var gameRunning = await gameRepository.GetGameForUser(userId, false, true, false);
+                if (gameRunning != null)
+                {
+                    await Groups.AddToGroupAsync(Context.ConnectionId, gameRunning.Id.ToString());
+                    var question = await gameRepository.GetQuestion(gameRunning.Id);
+                    await Clients.Group(gameRunning.Id.ToString()).SendAsync("PlayerConnected", new PlayerConnectedViewModel(gameRunning));
+                    await Clients.Group(gameRunning.Id.ToString()).SendAsync("QuestionRecieved", new QuestionViewModel(question, question.UserSelectedAnswers.Count == gameRunning.Users.Count));
+                }
+            }
+        
+
+            return true;
+        }
+        
     }
 }
