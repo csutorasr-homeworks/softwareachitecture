@@ -21,6 +21,7 @@ namespace Web.Data
                     Name = x,
                 }).ToList();
                 dbContext.QuestionCategories.AddRange(categories);
+                var random = new Random();
                 var questions = json.Select(q => new Models.Question
                 {
                     QuestionCategory = categories.FirstOrDefault(x => x.Name == q.category),
@@ -36,7 +37,7 @@ namespace Web.Data
                             IsCorrect = true,
                             Text = q.correct_answer,
                         }
-                    }).ToList(),
+                    }).OrderBy(order => random.Next()).ToList(),
                 }).ToList();
                 dbContext.Questions.AddRange(questions);
                 dbContext.SaveChanges();
