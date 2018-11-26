@@ -59,7 +59,7 @@ var gameviewmodell = (function () {
     vm.optionVMs = ko.observableArray().extend({ rateLimit: 50 });
     vm.guessVMs = ko.observableArray().extend({ rateLimit: 50 });
     vm.scoreVM = ko.observableArray();
-    vm.scoreVMs = ko.observableArray();
+    vm.scoreVMs = ko.observableArray().extend({ rateLimit: 50 });
     vm.gameResults = ko.observableArray();
 
     vm.currentUser = {
@@ -172,10 +172,11 @@ var gameviewmodell = (function () {
         event.preventDefault();
     };
     vm.gameId = ko.observable("");
+
     vm.onPlayersConnected = function callback(data) {
         var users = data.users, gameCanStart = data.gameCanStart, gameStarted = data.gameStarted;       
         vm.players.removeAll();
-        vm.gameId(data.gameId)
+        vm.gameId(data.gameId);
         for (var i = 0; i < users.length; i++) {
             let user = users[i];
             vm.players.push(new Player(user, vm.colors[i], user.userId === vm.currentUser.userId));
@@ -187,12 +188,10 @@ var gameviewmodell = (function () {
         if (gameStarted) {
             if (vm.question() === null) {
                 var sub = vm.question.subscribe(function () {
-                    vm.scoreVMs.removeAll();
                     vm.state("started");
                     sub.dispose();
                 });
             } else {
-                vm.scoreVMs.removeAll();
                 vm.state("started");
             }
             vm.createScoreVMs();
@@ -242,21 +241,29 @@ var gameviewmodell = (function () {
     };
     vm.createScoreVMs = function () {
         vm.scoreVMs.removeAll();
-        vm.players().forEach(function (player) {
+    };
+    
+    vm.onScoreRecieved = function (scores) {
+        vm.scoreVMs.removeAll();
+        function createForUser(player,ifCurrent) {
             var scoreVM = {
                 points: ko.observable(0),
                 userId: player.user.userId,
                 color: player.color.class,
-                name: player.user.userName
+                name: ifCurrent ? "You have" : player.user.userName+ " has"
             };
             vm.scoreVMs.push(scoreVM);
+        }
+
+        createForUser(vm.players().find(x => x.user.userId === vm.currentUser.userId), true);
+        var others = vm.players().filter(x => x.user.userId !== vm.currentUser.userId) || [];
+        others.forEach(function (player) {
+            createForUser(player);
         });
-    };
-    
-    vm.onScoreRecieved = function (scores) {
         vm.scoreVMs().forEach(function (score) {
-            score.points(scores.find(x => x.userId === score.userId).points);
+            score.points(scores.sumPointsByUser[score.userId]);
         });
+
     };
 
     vm.sendGuess = function (id) {
@@ -308,6 +315,7 @@ var gameviewmodell = (function () {
     connection.onQuestionsRecieved(vm.onQuestionRecieved);
     connection.onGameEnded(vm.onGameEnded);
     connection.onGameListUpdate(vm.onGameListUpdate);
+    connection.onScoreRecieved(vm.onScoreRecieved);
     connection.onRecieveMessage(function (user, message) {
         var encodedMsg = user + ": " + message;
         var li = document.createElement("li");

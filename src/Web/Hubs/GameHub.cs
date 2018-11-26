@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Web.Repositories;
@@ -93,11 +94,12 @@ namespace Web.Hubs
                 await GetGames();
                 await Clients.Group(gameSession.Id.ToString()).SendAsync("PlayerConnected", new PlayerConnectedViewModel(gameSession));
                 var question = await gameRepository.GetQuestion(gameSession.Id);
+                await SendScoreRecieved(gameSession.Id);
                 await Clients.Group(gameSession.Id.ToString()).SendAsync("QuestionRecieved", new QuestionViewModel(question));
             }
         }
 
-        public async Task<bool> SendGuess(string answerId)
+        public async Task SendGuess(string answerId)
         {
             var userId = Context.UserIdentifier;
             var gameSession = await gameRepository.GetGameForUser(userId, false, true, false);
@@ -106,10 +108,11 @@ namespace Web.Hubs
                 await gameRepository.SelectAnswer(gameSession.Id, userId, new System.Guid(answerId));
 
                 var question = await gameRepository.GetQuestion(gameSession.Id);
-                await Clients.Group(gameSession.Id.ToString()).SendAsync("QuestionRecieved", new QuestionViewModel(question, question.UserSelectedAnswers.Count == gameSession.Users.Count));
-                if (question.UserSelectedAnswers.Count == gameSession.Users.Count)
+                var areAllAnswered = question.UserSelectedAnswers.Count == gameSession.Users.Count;
+                await Clients.Group(gameSession.Id.ToString()).SendAsync("QuestionRecieved", new QuestionViewModel(question, areAllAnswered));
+                if (areAllAnswered)
                 {
-                    if(gameSession.CurrentQuestion >= gameSession.QuestionCount-1)
+                    if (gameSession.CurrentQuestion >= gameSession.QuestionCount-1)
                     {
                         gameSession.InProgress = false;
                         gameSession.Finnished = true;
@@ -119,22 +122,24 @@ namespace Web.Hubs
                     }
                     else
                     {
+
                         gameSession.CurrentQuestion++;
                         await gameRepository.UpdateGame(gameSession);
+                        await SendScoreRecieved(gameSession.Id);
                         System.Threading.Thread.Sleep(2000);
                         question = await gameRepository.GetQuestion(gameSession.Id);
                         await Clients.Group(gameSession.Id.ToString()).SendAsync("QuestionRecieved", new QuestionViewModel(question));
                     }
                 }
-                return true;
-            }
-            else
-            {
-                return false;
             }
         }
 
-        public async Task<bool> Reconnect()
+        private async Task SendScoreRecieved(Guid gameSessionId)
+        {
+            await Clients.Group(gameSessionId.ToString()).SendAsync("ScoreRecieved", new ResultViewModel(await gameRepository.GetResults(gameSessionId)));
+        }
+
+        public async Task Reconnect()
         {
 
             var userId = Context.UserIdentifier;
@@ -156,13 +161,12 @@ namespace Web.Hubs
                     if(question != null)
                     {
                         await Clients.Group(gameRunning.Id.ToString()).SendAsync("PlayerConnected", new PlayerConnectedViewModel(gameRunning));
+                        await SendScoreRecieved(gameRunning.Id);
                         await Clients.Group(gameRunning.Id.ToString()).SendAsync("QuestionRecieved", new QuestionViewModel(question, question.UserSelectedAnswers.Count == gameRunning.Users.Count));
                     }
                 }
             }
         
-
-            return true;
         }
         
     }

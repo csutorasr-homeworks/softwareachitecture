@@ -110,11 +110,12 @@
                                     </div>
                                 </div>
                             </div>
-                            @*<div class="row player-points-row" data-bind="foreach:scoreVMs">
-                                <div class="col player-point" data-bind="css:color"><span data-bind="text:name"></span> has <span data-bind="text:points"></span> points</div>
-                            </div>*@
+                            <!-- ko foreach:scoreVMs -->
+                            <div class="row player-points-row" >
+                                <div class="col player-point" data-bind="css:color"><span data-bind="text:name"></span> <span data-bind="text:points"></span> points</div>
+                            </div>
+                            <!-- /ko -->
                         </div>
-
                     </div>
                     <!-- /ko -->
                 </div>

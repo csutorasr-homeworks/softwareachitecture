@@ -92,6 +92,10 @@ window.connection = (function () {
         onGameListUpdate: function (callback) {
             connection.on("GameListUpdate", callback);
         },
+        /**/
+        onScoreRecieved: function (callback) {
+            connection.on("ScoreRecieved", callback);
+        },
 
         invokeGetGames: function () {
             return connection.invoke("GetGames");

@@ -145,7 +145,7 @@ namespace Web.Repositories.Implementations
 
         public Task<GameSession> GetResults(Guid gameId)
         {
-            return dbContext.GameSessions
+            return dbContext.GameSessions.AsNoTracking()
                 .Where(x => x.Id == gameId)
                 .Include(x => x.Users)
                 .ThenInclude(x => x.User)
